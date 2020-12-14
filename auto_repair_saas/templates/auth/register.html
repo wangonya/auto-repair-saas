@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="uk-card uk-card-default uk-card-body uk-width-3-4 uk-position-center">
+        <form action="/auth/register" method="post" class="uk-form-stacked">
+            {% csrf_token %}
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_name">Name</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                    {{ form.name }}
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_email">Email</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                    {{ form.email }}
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_password">Password</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon" uk-icon="icon: lock"></span>
+                    {{ form.password }}
+                </div>
+            </div>
+            <button class="uk-button uk-button-primary" type="submit">Register</button>
+        </form>
+        <br>
+        <p style="text-align: center">Have an account? <a href="/auth/login">Login</a></p>
+    </div>
+{% endblock %}

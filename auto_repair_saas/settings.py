@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 SHARED_APPS = (
     'django_tenants',
-    'auto-repair-saas.apps.tenants',
+    'auto_repair_saas.apps.tenants',
 
     'django.contrib.contenttypes',
     'django.contrib.admin',
@@ -39,6 +39,7 @@ SHARED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'auto_repair_saas.apps.authentication'
 )
 
 TENANT_APPS = (
@@ -48,7 +49,7 @@ TENANT_APPS = (
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 
 MIDDLEWARE = [
-    'auto-repair-saas.apps.tenants.middleware.TenantMiddleware',
+    'auto_repair_saas.apps.tenants.middleware.TenantMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,13 +59,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'auto-repair-saas.urls'
+ROOT_URLCONF = 'auto_repair_saas.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': ['auto_repair_saas/templates'],
+        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -76,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'auto-repair-saas.wsgi.application'
+WSGI_APPLICATION = 'auto_repair_saas.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -134,3 +135,5 @@ STATIC_URL = '/static/'
 
 TENANT_MODEL = "tenants.Tenant"
 TENANT_DOMAIN_MODEL = "tenants.Domain"
+
+AUTH_USER_MODEL = 'authentication.User'

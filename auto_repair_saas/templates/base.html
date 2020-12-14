@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Repair Shop Manager</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/css/uikit.min.css"/>
+</head>
+<body>
+{% if user.is_autheniticated %}
+<nav class="uk-navbar-container uk-margin" uk-navbar>
+    <div class="uk-navbar-left">
+
+        <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+
+        <ul class="uk-navbar-nav">
+            <li>
+                <a href="#">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: star"></span>
+                    Features
+                </a>
+            </li>
+        </ul>
+
+        <div class="uk-navbar-item">
+            <div>Some <a href="#">Link</a></div>
+        </div>
+
+        <div class="uk-navbar-item">
+            <form action="javascript:void(0)">
+                <input class="uk-input uk-form-width-small" type="text" placeholder="Input">
+                <button class="uk-button uk-button-default">Button</button>
+            </form>
+        </div>
+
+    </div>
+</nav>
+{% endif %}
+<div class="uk-container">
+    {% block content %}{% endblock %}
+</div>
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/js/uikit-icons.min.js"></script>
+</body>
+</html>
