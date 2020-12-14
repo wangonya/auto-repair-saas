@@ -33,9 +33,9 @@ class UserManager(BaseUserManager):
         # set paid until date one month from now for trial period
         paid_until = date.today() + relativedelta(months=+1)
         on_trial = True
-        create_tenant(schema_name=schema_name,
-                      paid_until=paid_until,
-                      on_trial=on_trial)
+        create_tenant(
+            schema_name=schema_name, paid_until=paid_until, on_trial=on_trial
+        )
 
         user.save()
         return user
