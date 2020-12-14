@@ -40,7 +40,12 @@ def login(request):
             if user is not None:
                 return HttpResponseRedirect('/')
             else:
-                print('invalid credentials')
+                error = 'Invalid email / password.'
+                return render(
+                    request, 'auth/login.html', {
+                        'form': form, 'error': error
+                    }
+                )
     else:
         form = LoginForm()
     return render(request, 'auth/login.html', {'form': form})
