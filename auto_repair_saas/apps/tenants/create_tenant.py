@@ -15,10 +15,6 @@ def create_tenant(schema_name='public',
                   paid_until=None,
                   on_trial=False):
     try:
-        if (schema_name != 'public') and (paid_until is None):
-            # set paid until date one month from now for trial period
-            paid_until = date.today() + relativedelta(months=+1)
-            on_trial = True
         tenant = Tenant(schema_name=schema_name,
                         paid_until=paid_until,
                         on_trial=on_trial)

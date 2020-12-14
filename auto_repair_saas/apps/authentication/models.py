@@ -1,9 +1,11 @@
 import random
 import string
 
+from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.utils.datetime_safe import date
 
 from auto_repair_saas.apps.tenants.create_tenant import create_tenant
 
@@ -22,7 +24,15 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, schema=schema_name, **extra_fields)
         user.set_password(password)
-        create_tenant(schema_name=schema_name)
+
+        # tenant fields
+        # set paid until date one month from now for trial period
+        paid_until = date.today() + relativedelta(months=+1)
+        on_trial = True
+        create_tenant(schema_name=schema_name,
+                      paid_until=paid_until,
+                      on_trial=on_trial)
+
         user.save()
         return user
 
