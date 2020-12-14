@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-from datetime import date
-
 # from celery import shared_task
-from dateutil.relativedelta import relativedelta
 from django.db import DatabaseError
 from django.db.utils import IntegrityError
 
@@ -26,10 +23,14 @@ def create_tenant(schema_name='public',
         domain.save()
     except IntegrityError as e:
         if '(domain_url)=(public) already exists.' in e.args[0]:
-            # public schema already exists - this will most likely happen when running migrations
+            # public schema already exists
+            # this will most likely happen when running migrations
             pass
         else:
-            raise DatabaseError(f'An error occurred while setting up the tenant schema: {e}')
+            raise DatabaseError(
+                f'An error occurred while setting up the tenant schema: {e}'
+            )
     except Exception as e:
         raise DatabaseError(
-            f'An error occurred while setting up the tenant schema: {e}')
+            f'An error occurred while setting up the tenant schema: {e}'
+        )

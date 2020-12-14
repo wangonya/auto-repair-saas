@@ -7,7 +7,6 @@ class Tenant(TenantMixin):
     on_trial = models.BooleanField(default=True)
     created_on = models.DateField(auto_now_add=True)
 
-    # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
 
 
