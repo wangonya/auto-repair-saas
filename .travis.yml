@@ -15,4 +15,5 @@ install:
 script:
   - ./run_tests.sh
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter format-coverage -t coverage.py -o -
+  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then ./cc-test-reporter upload-coverage; fi
