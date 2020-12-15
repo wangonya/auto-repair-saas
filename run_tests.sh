@@ -1,2 +1,2 @@
-coverage run --source='.' manage.py test
-coverage report
+coverage run --source='auto_repair_saas.apps' manage.py test
+coverage report -m

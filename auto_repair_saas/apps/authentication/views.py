@@ -1,5 +1,5 @@
 from django.contrib import auth
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -12,20 +12,26 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             try:
-                User.objects.get(email=form.cleaned_data['email'])
+                User.objects.create_user(
+                    form.cleaned_data['name'],
+                    form.cleaned_data['email'],
+                    form.cleaned_data['password']
+                )
+                return HttpResponseRedirect('/auth/register/success')
+            except IntegrityError:
                 error = 'An account with that email already exists.'
                 return render(
                     request, 'auth/register.html', {
                         'form': form, 'error': error
                     }
                 )
-            except ObjectDoesNotExist:
-                User.objects.create_user(
-                    form.cleaned_data['name'],
-                    form.cleaned_data['email'],
-                    form.cleaned_data['password']
+            except Exception as e:
+                error = str(e)
+                return render(
+                    request, 'auth/register.html', {
+                        'form': form, 'error': error
+                    }
                 )
-                print(f'Ok! Send verification email.')
     else:
         form = RegistrationForm()
     return render(request, 'auth/register.html', {'form': form})

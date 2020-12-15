@@ -1,6 +1,17 @@
 [run]
 omit =
     */migrations/*
-    ./venv/*
-    ./manage.py
     */tests.py
+    */apps.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    except Exception as e:
+    if __name__ == .__main__.:

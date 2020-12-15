@@ -8,7 +8,6 @@ from .create_tenant import create_tenant
 class TenantMiddleware(TenantMainMiddleware):
     def get_tenant(self, domain_model, hostname, *args):
         schema_name = get_public_schema_name()
-        print(f'args = {args}')
         try:
             domain = domain_model.objects.select_related('tenant').get(
                 domain=schema_name
