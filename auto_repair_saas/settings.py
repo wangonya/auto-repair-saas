@@ -103,19 +103,15 @@ DATABASE_ROUTERS = (
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        # noqa
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        # noqa
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-        # noqa
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-        # noqa
     },
 ]
 
@@ -141,3 +137,5 @@ TENANT_MODEL = "tenants.Tenant"
 TENANT_DOMAIN_MODEL = "tenants.Domain"
 
 AUTH_USER_MODEL = 'authentication.User'
+
+LOGIN_URL = '/auth/login.html'

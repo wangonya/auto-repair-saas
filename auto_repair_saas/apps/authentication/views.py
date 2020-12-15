@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -35,9 +35,10 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['email'],
-                                password=form.cleaned_data['password'])
+            user = auth.authenticate(username=form.cleaned_data['email'],
+                                     password=form.cleaned_data['password'])
             if user is not None:
+                auth.login(request, user)
                 return HttpResponseRedirect('/')
             else:
                 error = 'Invalid email / password.'
