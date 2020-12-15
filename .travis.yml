@@ -12,7 +12,7 @@ before_script:
 install:
   - pip install -r requirements.txt
 script:
-  - coverage run --source='.' manage.py test
+  - coverage run --source='auto_repair_saas.apps' manage.py test
   - coverage xml
 after_script:
   - ./cc-test-reporter format-coverage -t coverage.py
