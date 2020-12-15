@@ -1,0 +1,18 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=8198eaa2f9a395f1f253b77b47c7134804f93dd47736a9fe42b0e60f57ff3e0e
+language: python
+python:
+  - "3.8"
+services: postgresql
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+  - chmod +x ./run_tests.sh
+install:
+  - pip install -r requirements.txt
+script:
+  - ./run_tests.sh
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
