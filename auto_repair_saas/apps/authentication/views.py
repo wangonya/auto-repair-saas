@@ -17,7 +17,14 @@ def register(request):
                     form.cleaned_data['email'],
                     form.cleaned_data['password']
                 )
-                return HttpResponseRedirect('/auth/register/success')
+                success = 'Account registered successfully. ' \
+                          'A verification email has been sent to ' \
+                          f"{form.cleaned_data['email']}."
+                return render(
+                    request, 'auth/register.html', {
+                        'form': form, 'success': success
+                    }
+                )
             except IntegrityError:
                 error = 'An account with that email already exists.'
                 return render(

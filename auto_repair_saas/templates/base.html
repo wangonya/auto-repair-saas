@@ -8,34 +8,41 @@
 </head>
 <body>
 {% if user.is_autheniticated %}
-<nav class="uk-navbar-container uk-margin" uk-navbar>
-    <div class="uk-navbar-left">
-        <a class="uk-navbar-item uk-logo" href="#">Logo</a>
-        <ul class="uk-navbar-nav">
-            <li>
-                <a href="#">
-                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: star"></span>
-                    Features
-                </a>
-            </li>
-        </ul>
-        <div class="uk-navbar-item">
-            <div>Some <a href="#">Link</a></div>
+    <nav class="uk-navbar-container uk-margin" uk-navbar>
+        <div class="uk-navbar-left">
+            <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+            <ul class="uk-navbar-nav">
+                <li>
+                    <a href="#">
+                        <span class="uk-icon uk-margin-small-right" uk-icon="icon: star"></span>
+                        Features
+                    </a>
+                </li>
+            </ul>
+            <div class="uk-navbar-item">
+                <div>Some <a href="#">Link</a></div>
+            </div>
+            <div class="uk-navbar-item">
+                <form action="javascript:void(0)">
+                    <input class="uk-input uk-form-width-small" type="text" placeholder="Input">
+                    <button class="uk-button uk-button-default">Button</button>
+                </form>
+            </div>
         </div>
-        <div class="uk-navbar-item">
-            <form action="javascript:void(0)">
-                <input class="uk-input uk-form-width-small" type="text" placeholder="Input">
-                <button class="uk-button uk-button-default">Button</button>
-            </form>
-        </div>
-    </div>
-</nav>
+    </nav>
 {% endif %}
 <div class="uk-container">
     {% if error %}
-        <div class="uk-alert-danger uk-position-medium uk-position-top-right uk-animation-shake" uk-alert>
+        <div class="uk-alert-danger uk-position-medium uk-position-top-right uk-animation-shake" uk-alert
+             style="max-width: 350px">
             <a class="uk-alert-close" uk-close></a>
             <p>{{ error }}</p>
+        </div>
+    {% elif success %}
+        <div class="uk-alert-success uk-position-medium uk-position-top-right uk-animation-slide-right-medium" uk-alert
+             style="max-width: 350px">
+            <a class="uk-alert-close" uk-close></a>
+            <p>{{ success }}</p>
         </div>
     {% endif %}
     {% block content %}{% endblock %}

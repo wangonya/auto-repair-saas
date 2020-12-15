@@ -38,8 +38,8 @@ class AuthTestCase(TestCase):
         response = self.client.post(
             '/auth/register', data=data
         )
-        # self.assertRedirects(response, '/auth/register/success')
         self.assertTrue(User.objects.get(email=email))
+        self.assertIn(email, response.context['success'])
 
     def test_user_cannot_register_with_existing_email(self):
         user = UserFactory()
