@@ -1,24 +1,27 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
 from django_tenants.middleware import TenantMainMiddleware
-from django_tenants.utils import get_public_schema_name
-
-from .create_tenant import create_tenant
+from django_tenants.utils import get_tenant_domain_model
 
 
 class TenantMiddleware(TenantMainMiddleware):
-    def get_tenant(self, domain_model, hostname, *args):
-        schema_name = get_public_schema_name()
+    def process_request(self, request):
+        # Connection needs first to be at the public schema, as this is where
+        # the tenant metadata is stored.
+        connection.set_schema_to_public()
+
+        if request.user.is_authenticated:
+            hostname = request.user.schema
+        else:
+            hostname = 'public'
+
+        domain_model = get_tenant_domain_model()
         try:
-            domain = domain_model.objects.select_related('tenant').get(
-                domain=schema_name
-            )
-            return domain.tenant
-        except ObjectDoesNotExist:
-            if schema_name == 'public':
-                create_tenant()
-                domain = domain_model.objects.select_related('tenant').get(
-                    domain=schema_name
-                )
-                return domain.tenant
-            else:
-                raise
+            tenant = self.get_tenant(domain_model, hostname)
+        except domain_model.DoesNotExist:
+            raise self.TENANT_NOT_FOUND_EXCEPTION(
+                'No tenant for hostname "%s"' % hostname)
+
+        tenant.domain_url = hostname
+        request.tenant = tenant
+
+        connection.set_tenant(request.tenant)

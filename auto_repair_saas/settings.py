@@ -44,12 +44,12 @@ SHARED_APPS = (
 TENANT_APPS = (
     'django.contrib.contenttypes',
     'auto_repair_saas.apps.dashboard',
+    'auto_repair_saas.apps.jobs',
 )
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 
 MIDDLEWARE = [
-    'auto_repair_saas.apps.tenants.middleware.TenantMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auto_repair_saas.apps.tenants.middleware.TenantMiddleware',
 ]
 
 ROOT_URLCONF = 'auto_repair_saas.urls'
