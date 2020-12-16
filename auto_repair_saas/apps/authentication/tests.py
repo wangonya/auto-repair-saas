@@ -72,7 +72,7 @@ class AuthTestCase(TestCase):
         response = self.client.post(
             '/auth/login', data=data
         )
-        # self.assertRedirects(response, '/auth/register/success')
+        self.assertRedirects(response, '/')
 
     def test_user_cannot_login_with_invalid_credentials(self):
         email = 'test123@mail.com'
@@ -87,3 +87,7 @@ class AuthTestCase(TestCase):
         )
         self.assertEqual(response.context['error'],
                          'Invalid email / password.')
+
+    def test_user_can_logout(self):
+        response = self.client.post('/auth/logout')
+        self.assertRedirects(response, '/auth/login')

@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 SHARED_APPS = (
     'django_tenants',
     'auto_repair_saas.apps.tenants',
-
     'django.contrib.contenttypes',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +43,7 @@ SHARED_APPS = (
 
 TENANT_APPS = (
     'django.contrib.contenttypes',
+    'auto_repair_saas.apps.dashboard',
 )
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))

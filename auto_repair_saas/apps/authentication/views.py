@@ -1,4 +1,5 @@
 from django.contrib import auth
+from django.contrib.auth import logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -63,3 +64,8 @@ def login(request):
     else:
         form = LoginForm()
     return render(request, 'auth/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/auth/login')
