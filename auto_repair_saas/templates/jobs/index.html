@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <span class="uk-h2">Jobs</span>
+        <a class="uk-button uk-button-primary uk-float-right" href="/jobs/new">New Job</a>
+    </div>
+
+    {#  job tabs  #}
+    <ul uk-tab>
+        <li><a href="#">Estimates</a></li>
+        <li><a href="#">In Progress</a></li>
+        <li><a href="#">Done</a></li>
+    </ul>
+
+    {#  job tables  #}
+    <ul class="uk-switcher uk-margin">
+        <li>
+            <table class="uk-table uk-table-hover uk-table-divider">
+                <thead>
+                <tr>
+                    <th>Job #</th>
+                    <th>Created On</th>
+                    <th>Due Start Date</th>
+                    <th>Due End Date</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Charged</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>Table Data</td>
+                    <td>
+                        <ul class="uk-iconnav">
+                            <li uk-tooltip="View"><a href="#" uk-icon="icon: expand" class="uk-text-primary"></a></li>
+                            <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a>
+                            </li>
+                            <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </li>
+    </ul>
+{% endblock %}

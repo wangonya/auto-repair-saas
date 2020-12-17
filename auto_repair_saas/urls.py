@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', include('auto_repair_saas.apps.dashboard.urls')),
+    path('jobs/', include('auto_repair_saas.apps.jobs.urls')),
     path('auth/', include('auto_repair_saas.apps.authentication.urls')),
     path('admin/', admin.site.urls),
 ]
