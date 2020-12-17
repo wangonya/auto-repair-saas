@@ -3,6 +3,7 @@ omit =
     */migrations/*
     */tests.py
     */apps.py
+    */tenants/*
 
 [report]
 exclude_lines =
