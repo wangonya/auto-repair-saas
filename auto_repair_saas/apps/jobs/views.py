@@ -15,7 +15,7 @@ def new_job(request):
     if request.method == 'POST':
         form = NewJobForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect('/jobs')
+            return HttpResponseRedirect('/jobs/')
         else:
             error = 'Invalid email / password.'
             return render(
