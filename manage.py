@@ -7,6 +7,8 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault(
+        'DJANGO_SETTINGS_MODULE', 'auto_repair_saas.test_settings',
+    ) if 'test' in sys.argv else os.environ.setdefault(
         'DJANGO_SETTINGS_MODULE', 'auto_repair_saas.settings',
     )
     try:
