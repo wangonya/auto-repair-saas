@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="uk-card uk-card-default uk-card-body uk-width-3-4 uk-position-center">
-        <style>
-            input {
-                width: 320px !important;
-            }
-        </style>
         <form action="/auth/register" method="post" class="uk-form-stacked">
             {% csrf_token %}
             <div class="uk-margin">
