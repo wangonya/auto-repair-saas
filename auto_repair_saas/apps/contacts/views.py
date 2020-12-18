@@ -31,7 +31,7 @@ def new_contact(request):
                     }
                 )
         else:
-            error = 'Invalid email / password.'
+            error = 'Form is invalid.'
             return render(
                 request, 'contacts/new.html', {
                     'form': form, 'error': error
