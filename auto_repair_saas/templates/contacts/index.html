@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <span class="uk-h2">Contacts</span>
+        <a class="uk-button uk-button-primary uk-float-right" href="/contacts/new">New Contact</a>
+    </div>
+
+    {#  contact tabs  #}
+    <ul uk-tab>
+        <li><a href="#">Clients</a></li>
+        <li><a href="#">Suppliers</a></li>
+    </ul>
+
+    {#  contact cards  #}
+    <ul class="uk-switcher uk-margin">
+        <li>
+            <div class="" uk-grid>
+                {% for client in clients %}
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-small">
+                            <div class="uk-card-header">
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <div class="uk-width-auto">
+                                        <img class="uk-border-circle" width="40" height="40" alt="{{ client.name }}"
+                                             src="https://ui-avatars.com/api/?background=random&name={{ client.name }}">
+                                    </div>
+                                    <div class="uk-width-expand">
+                                        <h3 class="uk-card-title uk-margin-remove-bottom">{{ client.name }}</h3>
+                                        <p class="uk-text-meta uk-margin-remove-top">
+                                            Created:
+                                            <time datetime="2016-04-01T19:00">{{ client.created_on }}</time>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-card-body">
+                                <span uk-icon="icon: mail"></span> <span class="uk-text-small uk-padding-small">
+                                {% if client.email %}
+                                    {{ client.email }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </span>
+                                <br>
+                                <span uk-icon="icon: receiver"></span> <span class="uk-text-small uk-padding-small">
+                                {% if client.phone %}
+                                    {{ client.phone }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </li>
+        <li>
+            <div class="" uk-grid>
+                {% for supplier in suppliers %}
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-small">
+                            <div class="uk-card-header">
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <div class="uk-width-auto">
+                                        <img class="uk-border-circle" width="40" height="40" alt="{{ supplier.name }}"
+                                             src="https://ui-avatars.com/api/?background=random&name={{ supplier.name }}">
+                                    </div>
+                                    <div class="uk-width-expand">
+                                        <h3 class="uk-card-title uk-margin-remove-bottom">{{ supplier.name }}</h3>
+                                        <p class="uk-text-meta uk-margin-remove-top">
+                                            Created:
+                                            <time datetime="2016-04-01T19:00">{{ supplier.created_on }}</time>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-card-body">
+                                <span uk-icon="icon: mail"></span> <span class="uk-text-small uk-padding-small">
+                                {{ supplier.email }}
+                            </span> <br>
+                                <span uk-icon="icon: receiver"></span> <span class="uk-text-small uk-padding-small">
+                                {{ supplier.phone }}
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </li>
+    </ul>
+{% endblock %}
