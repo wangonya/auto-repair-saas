@@ -1,17 +1,19 @@
 from django import forms
 
+from auto_repair_saas.apps.contacts.models import Contact
+
 
 class NewJobForm(forms.Form):
-    CLIENT_CHOICES = [('', 'Select a client'), ('customer', 'Customer'), ]
-    VEHICLE_CHOICES = [('', 'Select a vehicle'), ('vehicle', 'Vehicle'), ]
-    MECHANIC_CHOICES = [('', 'Select a mechanic'), ('mechanic', 'Mechanic')]
+    VEHICLE_CHOICES = [('', 'Select a vehicle'), ]
+    MECHANIC_CHOICES = [('', 'Select a mechanic'), ]
 
     select_attrs = {'class': 'uk-select uk-form-width-medium'}
     input_attrs = {'class': 'uk-input uk-form-width-medium'}
     date_attrs = {'class': 'uk-input uk-form-width-medium', 'type': 'date'}
 
-    client = forms.CharField(
-        widget=forms.Select(choices=CLIENT_CHOICES, attrs=select_attrs)
+    client = forms.ModelChoiceField(
+        queryset=Contact.objects.filter(contact_type='client'),
+        widget=forms.Select(attrs=select_attrs)
     )
     vehicle = forms.CharField(
         widget=forms.Select(choices=VEHICLE_CHOICES, attrs=select_attrs)

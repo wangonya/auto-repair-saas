@@ -45,6 +45,7 @@ TENANT_APPS = (
     'django.contrib.contenttypes',
     'auto_repair_saas.apps.dashboard',
     'auto_repair_saas.apps.jobs',
+    'auto_repair_saas.apps.contacts'
 )
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
