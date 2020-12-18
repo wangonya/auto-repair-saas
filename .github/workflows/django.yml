@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,10 +31,14 @@ jobs:
         chmod +x ./cc-test-reporter
         ./cc-test-reporter before-build
     - name: Run Tests
+      env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         coverage run --source='auto_repair_saas.apps' manage.py test
         coverage xml
     - name: Upload Test Results
+      env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       run: |
         ./cc-test-reporter format-coverage -t coverage.py
         ./cc-test-reporter upload-coverage
