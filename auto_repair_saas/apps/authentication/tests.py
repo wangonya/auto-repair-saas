@@ -1,7 +1,7 @@
 import factory
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.models import signals
 from django.test import TestCase
+from django.urls import reverse
 from faker import Faker
 
 from .models import User
@@ -9,7 +9,6 @@ from .models import User
 fake = Faker()
 
 
-@factory.django.mute_signals(signals.post_save)
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
@@ -21,7 +20,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AuthTestCase(TestCase):
     def test_get_user_registration_page(self):
-        response = self.client.get('/auth/register')
+        response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
 
     def test_user_can_register(self):
@@ -36,7 +35,7 @@ class AuthTestCase(TestCase):
             'password': password
         }
         response = self.client.post(
-            '/auth/register', data=data
+            reverse('register'), data=data
         )
         self.assertTrue(User.objects.get(email=email))
         self.assertIn(email, response.context['success'])
@@ -49,7 +48,7 @@ class AuthTestCase(TestCase):
             'password': user.password
         }
         response = self.client.post(
-            '/auth/register', data=data
+            reverse('register'), data=data
         )
         self.assertEqual(response.context['error'],
                          'An account with that email already exists.')
@@ -59,20 +58,19 @@ class AuthTestCase(TestCase):
             User.objects.create_user(username='', email='', password='')
 
     def test_get_user_login_page(self):
-        response = self.client.get('/auth/login')
+        response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
 
     def test_existing_user_can_login(self):
-        with factory.django.mute_signals(signals.post_save):
-            self.test_user_can_register()
+        self.test_user_can_register()
         data = {
             'email': 'test@mail.com',
             'password': 'Testuser123'
         }
         response = self.client.post(
-            '/auth/login', data=data
+            reverse('login'), data=data
         )
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, reverse('dashboard'))
 
     def test_user_cannot_login_with_invalid_credentials(self):
         email = 'test123@mail.com'
@@ -83,11 +81,11 @@ class AuthTestCase(TestCase):
             'password': password
         }
         response = self.client.post(
-            '/auth/login', data=data
+            reverse('login'), data=data
         )
         self.assertEqual(response.context['error'],
                          'Invalid email / password.')
 
     def test_user_can_logout(self):
-        response = self.client.post('/auth/logout')
-        self.assertRedirects(response, '/auth/login')
+        response = self.client.post(reverse('logout'))
+        self.assertRedirects(response, reverse('login'))

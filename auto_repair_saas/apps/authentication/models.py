@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.base_user import BaseUserManager
@@ -7,8 +8,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.datetime_safe import date
-
-from auto_repair_saas.apps.tenants.create_tenant import create_tenant
 
 
 class UserManager(BaseUserManager):
@@ -30,9 +29,13 @@ class UserManager(BaseUserManager):
         )
         user.set_password(password)
         user.save()
-        create_tenant(schema_name=user.schema,
-                      paid_until=date.today() + relativedelta(months=+1),
-                      on_trial=True)
+
+        if 'test' not in sys.argv:  # don't create tenants for tests
+            from auto_repair_saas.apps.tenants.create_tenant import create_tenant # noqa
+            create_tenant(schema_name=user.schema,
+                          paid_until=date.today() + relativedelta(months=+1),
+                          on_trial=True)
+
         return user
 
 
