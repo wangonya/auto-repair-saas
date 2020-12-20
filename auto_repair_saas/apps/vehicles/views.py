@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
@@ -22,7 +21,9 @@ class VehiclesView(LoginRequiredMixin, View):
             try:
                 Vehicle.objects.create(**form.cleaned_data)
                 vehicles = Vehicle.objects.all()
-                return render(request, self.template_name, {'vehicles': vehicles})
+                return render(
+                    request, self.template_name, {'vehicles': vehicles}
+                )
             except Exception as e:
                 error = str(e)
                 return render(
@@ -45,4 +46,6 @@ def load_client_vehicles(request):
         vehicles = Vehicle.objects.filter(owner_id=owner_id)
     except ValueError:
         vehicles = Vehicle.objects.none()
-    return render(request, 'vehicles/vehicle_list_options.html', {'vehicles': vehicles})
+    return render(
+        request, reverse('load-vehicles'), {'vehicles': vehicles}
+    )

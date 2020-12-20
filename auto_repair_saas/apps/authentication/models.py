@@ -31,7 +31,7 @@ class UserManager(BaseUserManager):
         user.save()
 
         if 'test' not in sys.argv:  # don't create tenants for tests
-            from auto_repair_saas.apps.tenants.create_tenant import create_tenant # noqa
+            from auto_repair_saas.apps.tenants.create_tenant import create_tenant  # noqa
             create_tenant(schema_name=user.schema,
                           paid_until=date.today() + relativedelta(months=+1),
                           on_trial=True)

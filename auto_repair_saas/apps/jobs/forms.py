@@ -11,9 +11,11 @@ class NewJobForm(forms.Form):
         if 'client' in self.data:
             try:
                 owner_id = int(self.data.get('client'))
-                self.fields['vehicle'].queryset = Vehicle.objects.filter(owner_id=owner_id)
+                self.fields['vehicle'].queryset = Vehicle.objects.filter(
+                    owner_id=owner_id
+                )
             except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty Vehicle queryset
+                pass  # invalid input; fallback to empty Vehicle queryset
 
     MECHANIC_CHOICES = [('', 'Select a mechanic'), ]
 
