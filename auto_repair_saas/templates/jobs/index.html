@@ -29,14 +29,15 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for job in jobs %}
                 <tr>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
-                    <td>Table Data</td>
+                    <td>{{ job.id }}</td>
+                    <td>{{ job.created_on }}</td>
+                    <td>{{ job.due_start_date|default_if_none:"-" }}</td>
+                    <td>{{ job.due_end_date|default_if_none:"-" }}</td>
+                    <td>{{ job.client }}</td>
+                    <td>{{ job.vehicle }}</td>
+                    <td>{{ job.charged }}</td>
                     <td>
                         <ul class="uk-iconnav">
                             <li uk-tooltip="View"><a href="#" uk-icon="icon: expand" class="uk-text-primary"></a></li>
@@ -46,6 +47,7 @@
                         </ul>
                     </td>
                 </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </li>

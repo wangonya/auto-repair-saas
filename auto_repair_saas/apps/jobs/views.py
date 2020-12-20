@@ -1,28 +1,47 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
+from django.views import View
 
 from auto_repair_saas.apps.jobs.forms import NewJobForm
+from auto_repair_saas.apps.jobs.models import Job
 
 
-@login_required
-def jobs(request):
-    return render(request, 'jobs/index.html')
+class JobsView(LoginRequiredMixin, View):
+    form_class = NewJobForm
+    template_name = 'jobs/index.html'
+
+    def get(self, request, *args, **kwargs):
+        jobs = Job.objects.all()
+        return render(request, self.template_name, {'jobs': jobs})
 
 
-@login_required
-def new_job(request):
-    if request.method == 'POST':
-        form = NewJobForm(request.POST)
+class NewJobView(LoginRequiredMixin, View):
+    form_class = NewJobForm
+    template_name = 'jobs/new.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect('/jobs/')
+            try:
+                Job.objects.create(**form.cleaned_data)
+                return HttpResponseRedirect(reverse('jobs'))
+            except Exception as e:
+                error = str(e)
+                return render(
+                    request, self.template_name, {
+                        'form': form, 'error': error
+                    }
+                )
         else:
-            error = 'Invalid email / password.'
+            error = 'Form is invalid.'
             return render(
-                request, 'jobs/new.html', {
+                request, self.template_name, {
                     'form': form, 'error': error
                 }
             )
-    else:
-        form = NewJobForm()
-    return render(request, 'jobs/new.html', {'form': form})

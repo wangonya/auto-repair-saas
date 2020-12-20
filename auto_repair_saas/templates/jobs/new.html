@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-    <form action="/jobs/new" method="post" class="uk-grid-small uk-form-stacked center" uk-grid>
+    <form action="/jobs/new" method="post" class="uk-grid-small uk-form-stacked center" uk-grid id="new-job-form"
+          data-vehicles-url="{% url 'load-vehicles' %}">
         <legend class="uk-legend">Create a new job</legend>
         {% csrf_token %}
         <div class="uk-width-1-2">
@@ -55,19 +56,6 @@
                 {{ form.due_end_date }}
             </div>
         </div>
-        <div class="uk-width-1-1">
-            <label class="uk-form-label" for="id_description">Description Of Work</label>
-            {% if form.description.errors %}
-                <ul class="uk-list uk-list-disc uk-list-danger">
-                    {% for error in form.description.errors %}
-                        <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            <div class="uk-inline">
-                {{ form.description }}
-            </div>
-        </div>
         <div class="uk-width-1-2">
             <label class="uk-form-label" for="id_description">Assigned To</label>
             {% if form.assigned.errors %}
@@ -95,8 +83,38 @@
                 {{ form.charged }}
             </div>
         </div>
+        <div class="uk-width-1-1">
+            <label class="uk-form-label" for="id_description">Description Of Work</label>
+            {% if form.description.errors %}
+                <ul class="uk-list uk-list-disc uk-list-danger">
+                    {% for error in form.description.errors %}
+                        <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="uk-inline">
+                {{ form.description }}
+            </div>
+        </div>
         <div class="uk-inline uk-margin">
             <button class="uk-button uk-button-primary" type="submit">Create</button>
         </div>
     </form>
+    <script>
+        {# load vehicles data depending on selected client #}
+        const form = document.getElementById("new-job-form")
+        const clientSelect = document.getElementById('id_client')
+        const vehicleSelect = document.getElementById('id_vehicle')
+        const url = form.dataset.vehiclesUrl
+        clientSelect.onchange = event => {
+            fetch(`${url}?client=${clientSelect.value}`)
+                .then(response => response.text())
+                .then(html => {
+                    vehicleSelect.innerHTML = html
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
 {% endblock %}

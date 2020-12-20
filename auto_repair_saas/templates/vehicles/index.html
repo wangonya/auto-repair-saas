@@ -9,7 +9,7 @@
     <table class="uk-table uk-table-hover uk-table-divider">
         <thead>
         <tr>
-            <th>Number PLate</th>
+            <th>Number Plate</th>
             <th>Owner</th>
             <th>Action</th>
         </tr>
@@ -35,7 +35,7 @@
                 <legend class="uk-legend">Create a new vehicle</legend>
                 {% csrf_token %}
                 <div class="uk-width-1-2">
-                    <label class="uk-form-label" for="id_number_plate">Number PLate</label>
+                    <label class="uk-form-label" for="id_number_plate">Number Plate</label>
                     {% if form.number_plate.errors %}
                         <ul class="uk-list uk-list-disc uk-list-danger">
                             {% for error in form.number_plate.errors %}

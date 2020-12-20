@@ -4,5 +4,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', login_required(views.VehiclesView.as_view()), name='vehicles'),
+    path('', views.VehiclesView.as_view(), name='vehicles'),
+    path('load-vehicles', views.load_client_vehicles, name='load-vehicles'),
 ]

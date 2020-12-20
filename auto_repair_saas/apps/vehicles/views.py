@@ -1,11 +1,14 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 
 from auto_repair_saas.apps.vehicles.forms import NewVehicleForm
+from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
-class VehiclesView(View):
+class VehiclesView(LoginRequiredMixin, View):
     form_class = NewVehicleForm
     template_name = 'vehicles/index.html'
 
@@ -18,7 +21,8 @@ class VehiclesView(View):
         if form.is_valid():
             try:
                 Vehicle.objects.create(**form.cleaned_data)
-                return HttpResponseRedirect('/vehicles/')
+                vehicles = Vehicle.objects.all()
+                return render(request, self.template_name, {'vehicles': vehicles})
             except Exception as e:
                 error = str(e)
                 return render(
@@ -33,3 +37,12 @@ class VehiclesView(View):
                     'form': form, 'error': error
                 }
             )
+
+
+def load_client_vehicles(request):
+    owner_id = request.GET.get('client')
+    try:
+        vehicles = Vehicle.objects.filter(owner_id=owner_id)
+    except ValueError:
+        vehicles = Vehicle.objects.none()
+    return render(request, 'vehicles/vehicle_list_options.html', {'vehicles': vehicles})
