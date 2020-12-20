@@ -44,6 +44,7 @@ class VehicleTestCase(BaseTestCase):
 
     def test_load_vehicles(self):
         client = ContactFactory()
-        response = self.client.get(reverse('load-vehicles')+f'?client={client.id}')
+        response = self.client.get(f'/vehicles/load-vehicles?client={client.id}')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'vehicles/vehicle_list_options.html')
+        self.assertIsNotNone(response.context.get('vehicles'))

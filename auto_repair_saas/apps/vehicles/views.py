@@ -47,5 +47,5 @@ def load_client_vehicles(request):
     except ValueError:
         vehicles = Vehicle.objects.none()
     return render(
-        request, reverse('load-vehicles'), {'vehicles': vehicles}
+        request, 'vehicles/vehicle_list_options.html', {'vehicles': vehicles}
     )
