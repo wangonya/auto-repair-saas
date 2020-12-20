@@ -1,25 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from auto_repair_saas.apps.jobs.forms import NewJobForm
-from auto_repair_saas.apps.jobs.models import Job
+from auto_repair_saas.apps.vehicles.forms import NewVehicleForm
+from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
-class JobsView(LoginRequiredMixin, View):
-    form_class = NewJobForm
-    template_name = 'jobs/index.html'
-
-    def get(self, request, *args, **kwargs):
-        jobs = Job.objects.all()
-        return render(request, self.template_name, {'jobs': jobs})
-
-
-class NewJobView(LoginRequiredMixin, View):
-    form_class = NewJobForm
-    template_name = 'jobs/new.html'
+class VehiclesView(LoginRequiredMixin, View):
+    form_class = NewVehicleForm
+    template_name = 'vehicles/index.html'
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -29,8 +19,11 @@ class NewJobView(LoginRequiredMixin, View):
         form = self.form_class(request.POST)
         if form.is_valid():
             try:
-                Job.objects.create(**form.cleaned_data)
-                return HttpResponseRedirect(reverse('jobs'))
+                Vehicle.objects.create(**form.cleaned_data)
+                vehicles = Vehicle.objects.all()
+                return render(
+                    request, self.template_name, {'vehicles': vehicles}
+                )
             except Exception as e:
                 error = str(e)
                 return render(
@@ -45,3 +38,14 @@ class NewJobView(LoginRequiredMixin, View):
                     'form': form, 'error': error
                 }
             )
+
+
+def load_client_vehicles(request):
+    owner_id = request.GET.get('client')
+    try:
+        vehicles = Vehicle.objects.filter(owner_id=owner_id)
+    except ValueError:
+        vehicles = Vehicle.objects.none()
+    return render(
+        request, 'vehicles/vehicle_list_options.html', {'vehicles': vehicles}
+    )

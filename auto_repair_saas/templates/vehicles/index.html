@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <span class="uk-h2">Vehicles</span>
+        <a class="uk-button uk-button-primary uk-float-right" uk-toggle="target: #new-vehicle-modal">New Vehicle</a>
+    </div>
+
+    {#  vehicles table  #}
+    <table class="uk-table uk-table-hover uk-table-divider">
+        <thead>
+        <tr>
+            <th>Number Plate</th>
+            <th>Owner</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Table Data</td>
+            <td>Table Data</td>
+            <td>
+                <ul class="uk-iconnav">
+                    <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a></li>
+                    <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    {#  new vehicle modal  #}
+    <div id="new-vehicle-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <form action="/vehicles/" method="post" class="uk-grid-small uk-form-stacked center" uk-grid>
+                <legend class="uk-legend">Create a new vehicle</legend>
+                {% csrf_token %}
+                <div class="uk-width-1-2">
+                    <label class="uk-form-label" for="id_number_plate">Number Plate</label>
+                    {% if form.number_plate.errors %}
+                        <ul class="uk-list uk-list-disc uk-list-danger">
+                            {% for error in form.number_plate.errors %}
+                                <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <div class="uk-inline">
+                        {{ form.number_plate }}
+                    </div>
+                </div>
+                <div class="uk-width-1-2">
+                    <label class="uk-form-label" for="id_owner">Owner</label>
+                    {% if form.owner.errors %}
+                        <ul class="uk-list uk-list-disc uk-list-danger">
+                            {% for error in form.owner.errors %}
+                                <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <div class="uk-inline">
+                        {{ form.owner }}
+                    </div>
+                </div>
+                <div class="uk-inline uk-margin">
+                    <button class="uk-button uk-button-primary" type="submit">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

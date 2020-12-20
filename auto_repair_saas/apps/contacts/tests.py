@@ -1,18 +1,34 @@
+from django.urls import reverse
+from faker import Faker
+import factory
+
+from auto_repair_saas.apps.contacts.models import Contact
 from auto_repair_saas.apps.utils.tests import BaseTestCase
+
+
+fake = Faker()
+
+
+class ContactFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Contact
+
+    contact_type = 'client'
+    name = fake.name()
 
 
 class ContactsTestCase(BaseTestCase):
     def test_login_required(self):
         self.client.logout()
-        response = self.client.get('/contacts/')
+        response = self.client.get(reverse('contacts'))
         self.assertRedirects(response, '/auth/login?next=/contacts/')
 
     def test_get_contacts_page(self):
-        response = self.client.get('/contacts/')
+        response = self.client.get(reverse('contacts'))
         self.assertEqual(response.status_code, 200)
 
     def test_get_new_contact_page(self):
-        response = self.client.get('/contacts/new')
+        response = self.client.get(reverse('new-contact'))
         self.assertEqual(response.status_code, 200)
 
     def test_post_new_contact(self):
@@ -20,10 +36,10 @@ class ContactsTestCase(BaseTestCase):
             'name': 'customer',
             'contact_type': 'client'
         }
-        response = self.client.post('/contacts/new', data)
-        self.assertRedirects(response, '/contacts/')
+        response = self.client.post(reverse('new-contact'), data)
+        self.assertRedirects(response, reverse('contacts'))
 
     def test_post_new_contact_error(self):
-        response = self.client.post('/contacts/new', {})
+        response = self.client.post(reverse('new-contact'), {})
         self.assertEqual(response.context['error'],
                          'Form is invalid.')
