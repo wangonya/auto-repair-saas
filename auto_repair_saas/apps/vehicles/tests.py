@@ -1,6 +1,6 @@
+import factory
 from django.urls import reverse
 from faker import Faker
-import factory
 
 from auto_repair_saas.apps.contacts.tests import ContactFactory
 from auto_repair_saas.apps.utils.tests import BaseTestCase
@@ -18,11 +18,6 @@ class VehicleFactory(factory.django.DjangoModelFactory):
 
 
 class VehicleTestCase(BaseTestCase):
-    def test_login_required(self):
-        self.client.logout()
-        response = self.client.get(reverse('vehicles'))
-        self.assertRedirects(response, '/auth/login?next=/vehicles/')
-    
     def test_get_vehicles_page(self):
         response = self.client.get(reverse('vehicles'))
         self.assertEqual(response.status_code, 200)

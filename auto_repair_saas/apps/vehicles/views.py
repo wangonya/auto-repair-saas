@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.urls import reverse
 from django.views import View
 
 from auto_repair_saas.apps.vehicles.forms import NewVehicleForm

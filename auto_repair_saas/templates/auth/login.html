@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="uk-card uk-card-default uk-card-body uk-width-3-4 uk-position-center">
-        <form action="/auth/login" method="post" class="uk-form-stacked">
+        <form action="/auth/login/" method="post" class="uk-form-stacked">
             {% csrf_token %}
             <div class="uk-margin">
                 <label class="uk-form-label" for="id_email">Email</label>
                 <div class="uk-inline">
                     <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                    {{ form.email }}
+                    {{ form.username }}
                 </div>
                 {% if form.email.errors %}
                     <ul class="uk-list uk-list-disc uk-list-danger">
@@ -31,6 +31,11 @@
                     </ul>
                 {% endif %}
             </div>
+            {% if form.errors %}
+                <p class="uk-text-meta uk-text-danger" style="max-width: 310px">
+                    Your email and password didn't match. Please try again.
+                </p>
+            {% endif %}
             <button class="uk-button uk-button-primary" type="submit">Login</button>
         </form>
         <br>

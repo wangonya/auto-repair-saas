@@ -1,16 +1,28 @@
-from django.contrib import auth
-from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views import View
 
 from .forms import RegistrationForm, LoginForm
 from .models import User
 
 
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+class LoginUserView(LoginView):
+    template_name = 'auth/login.html'
+    authentication_form = LoginForm
+    redirect_authenticated_user = True
+
+
+class RegisterUserView(View):
+    form_class = RegistrationForm
+    template_name = 'auth/register.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             try:
                 User.objects.create_user(
@@ -22,50 +34,21 @@ def register(request):
                           'A verification email has been sent to ' \
                           f"{form.cleaned_data['email']}."
                 return render(
-                    request, 'auth/register.html', {
+                    request, self.template_name, {
                         'form': form, 'success': success
                     }
                 )
             except IntegrityError:
                 error = 'An account with that email already exists.'
                 return render(
-                    request, 'auth/register.html', {
+                    request, self.template_name, {
                         'form': form, 'error': error
                     }
                 )
             except Exception as e:
                 error = str(e)
                 return render(
-                    request, 'auth/register.html', {
+                    request, self.template_name, {
                         'form': form, 'error': error
                     }
                 )
-    else:
-        form = RegistrationForm()
-    return render(request, 'auth/register.html', {'form': form})
-
-
-def login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = auth.authenticate(username=form.cleaned_data['email'],
-                                     password=form.cleaned_data['password'])
-            if user is not None:
-                auth.login(request, user)
-                return HttpResponseRedirect('/')
-            else:
-                error = 'Invalid email / password.'
-                return render(
-                    request, 'auth/login.html', {
-                        'form': form, 'error': error
-                    }
-                )
-    else:
-        form = LoginForm()
-    return render(request, 'auth/login.html', {'form': form})
-
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect('/auth/login')
