@@ -8,11 +8,6 @@ from auto_repair_saas.apps.vehicles.tests import VehicleFactory
 fake = Faker()
 
 class JobsTestCase(BaseTestCase):
-    def test_login_required(self):
-        self.client.logout()
-        response = self.client.get(reverse('jobs'))
-        self.assertRedirects(response, '/auth/login?next=/jobs/')
-
     def test_get_jobs_page(self):
         response = self.client.get(reverse('jobs'))
         self.assertEqual(response.status_code, 200)

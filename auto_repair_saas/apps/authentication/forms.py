@@ -1,22 +1,25 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class RegistrationForm(forms.Form):
+    input_attrs = {'class': 'uk-input long-input'}
     name = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'uk-input long-input'}), max_length=100
+        attrs=input_attrs), max_length=100
     )
     email = forms.EmailField(widget=forms.EmailInput(
-        attrs={'class': 'uk-input long-input'}),
+        attrs=input_attrs),
     )
     password = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'uk-input long-input'}), min_length=8
+        attrs=input_attrs), min_length=8
     )
 
 
-class LoginForm(forms.Form):
-    email = forms.EmailField(widget=forms.EmailInput(
-        attrs={'class': 'uk-input long-input'}),
+class LoginForm(AuthenticationForm):
+    input_attrs = {'class': 'uk-input long-input'}
+    username = forms.EmailField(widget=forms.EmailInput(
+        attrs=input_attrs),
     )
     password = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'uk-input long-input'}), min_length=8
+        attrs=input_attrs), min_length=8
     )

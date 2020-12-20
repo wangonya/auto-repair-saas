@@ -64,28 +64,10 @@ class AuthTestCase(TestCase):
     def test_existing_user_can_login(self):
         self.test_user_can_register()
         data = {
-            'email': 'test@mail.com',
+            'username': 'test@mail.com',
             'password': 'Testuser123'
         }
         response = self.client.post(
             reverse('login'), data=data
         )
         self.assertRedirects(response, reverse('dashboard'))
-
-    def test_user_cannot_login_with_invalid_credentials(self):
-        email = 'test123@mail.com'
-        password = 'Testuser12345'
-
-        data = {
-            'email': email,
-            'password': password
-        }
-        response = self.client.post(
-            reverse('login'), data=data
-        )
-        self.assertEqual(response.context['error'],
-                         'Invalid email / password.')
-
-    def test_user_can_logout(self):
-        response = self.client.post(reverse('logout'))
-        self.assertRedirects(response, reverse('login'))
