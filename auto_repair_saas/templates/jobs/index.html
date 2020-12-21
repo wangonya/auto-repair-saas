@@ -2,7 +2,7 @@
 {% block content %}
     <div>
         <span class="uk-h2">Jobs</span>
-        <a class="uk-button uk-button-primary uk-float-right" href="/jobs/new">New Job</a>
+        <a class="uk-button uk-button-primary uk-float-right" href="{% url 'new-job' %}">New Job</a>
     </div>
 
     {#  job tabs  #}
@@ -30,23 +30,27 @@
                 </thead>
                 <tbody>
                 {% for job in jobs %}
-                <tr>
-                    <td>{{ job.id }}</td>
-                    <td>{{ job.created_on }}</td>
-                    <td>{{ job.due_start_date|default_if_none:"-" }}</td>
-                    <td>{{ job.due_end_date|default_if_none:"-" }}</td>
-                    <td>{{ job.client }}</td>
-                    <td>{{ job.vehicle }}</td>
-                    <td>{{ job.charged }}</td>
-                    <td>
-                        <ul class="uk-iconnav">
-                            <li uk-tooltip="View"><a href="#" uk-icon="icon: expand" class="uk-text-primary"></a></li>
-                            <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a>
-                            </li>
-                            <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
-                        </ul>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{ job.id }}</td>
+                        <td>{{ job.created_on }}</td>
+                        <td>{{ job.due_start_date|default_if_none:"-" }}</td>
+                        <td>{{ job.due_end_date|default_if_none:"-" }}</td>
+                        <td>{{ job.client }}</td>
+                        <td>{{ job.vehicle }}</td>
+                        <td>{{ job.charged }}</td>
+                        <td>
+                            <ul class="uk-iconnav">
+                                <li uk-tooltip="Open">
+                                    <a href="#" uk-icon="icon: push" class="uk-text-primary"
+                                       onclick="viewJob({{ job.id }})"></a>
+                                </li>
+                                <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a>
+                                </li>
+                                <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
