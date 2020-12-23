@@ -1,6 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 
 from .forms import RegistrationForm, LoginForm
@@ -33,11 +36,8 @@ class RegisterUserView(View):
                 success = 'Account registered successfully. ' \
                           'A verification email has been sent to ' \
                           f"{form.cleaned_data['email']}."
-                return render(
-                    request, self.template_name, {
-                        'form': form, 'success': success
-                    }
-                )
+                messages.success(request, success)
+                return HttpResponseRedirect(reverse('login'))
             except IntegrityError:
                 error = 'An account with that email already exists.'
                 return render(
@@ -47,8 +47,5 @@ class RegisterUserView(View):
                 )
             except Exception as e:
                 error = str(e)
-                return render(
-                    request, self.template_name, {
-                        'form': form, 'error': error
-                    }
-                )
+                messages.error(request, error)
+                return HttpResponseRedirect(reverse('register'))
