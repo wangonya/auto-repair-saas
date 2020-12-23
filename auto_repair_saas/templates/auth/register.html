@@ -1,53 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="uk-card uk-card-default uk-card-body uk-width-3-4 uk-position-center">
-        <form action="/auth/register/" method="post" class="uk-form-stacked">
-            {% csrf_token %}
-            <div class="uk-margin">
-                <label class="uk-form-label" for="id_name">Name</label>
-                <div class="uk-inline">
-                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+    <div class="row p-5 mt-5">
+        <div class="col-md-4 offset-md-4">
+            <h1 style="text-align: center">ARS Manager</h1>
+            <br>
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form-outline mb-4">
                     {{ form.name }}
+                    <label class="form-label" for="id_name">Name</label>
                 </div>
-                {% if form.name.errors %}
-                    <ul class="uk-list uk-list-disc uk-list-danger" style="max-width: 300px">
-                        {% for error in form.name.errors %}
-                            <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="uk-margin">
-                <label class="uk-form-label" for="id_email">Email</label>
-                <div class="uk-inline">
-                    <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                <div class="form-outline mb-4">
                     {{ form.email }}
+                    <label class="form-label" for="id_email">Email</label>
                 </div>
-                {% if form.email.errors %}
-                    <ul class="uk-list uk-list-disc uk-list-danger">
-                        {% for error in form.email.errors %}
-                            <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="uk-margin">
-                <label class="uk-form-label" for="id_password">Password</label>
-                <div class="uk-inline">
-                    <span class="uk-form-icon uk-form-icon" uk-icon="icon: lock"></span>
+                <div class="form-outline mb-4">
                     {{ form.password }}
+                    <label class="form-label" for="id_password">Password</label>
                 </div>
-                {% if form.password.errors %}
-                    <ul class="uk-list uk-list-disc uk-list-danger" style="max-width: 300px">
-                        {% for error in form.password.errors %}
-                            <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                        {% endfor %}
-                    </ul>
+                {% if form.errors %}
+                    <small class="text-danger">
+                        {{ form.errors }}
+                    </small>
+                    <br><br>
                 {% endif %}
-            </div>
-            <button class="uk-button uk-button-primary" type="submit">Register</button>
-        </form>
-        <br>
-        <p style="text-align: center">Have an account? <a href="/auth/login">Login</a></p>
+                {% if error %}
+                    <small class="text-danger">
+                        {{ error }}
+                    </small>
+                    <br><br>
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-block mb-4">Register</button>
+            </form>
+            <br>
+            <p style="text-align: center">Have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
     </div>
 {% endblock %}

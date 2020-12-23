@@ -1,4 +1,5 @@
 import factory
+from django.contrib.messages import get_messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase
 from django.urls import reverse
@@ -38,7 +39,9 @@ class AuthTestCase(TestCase):
             reverse('register'), data=data
         )
         self.assertTrue(User.objects.get(email=email))
-        self.assertIn(email, response.context['success'])
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertTrue(len(messages) == 1)
+        self.assertIn(email, messages[0])
 
     def test_user_cannot_register_with_existing_email(self):
         user = UserFactory()
