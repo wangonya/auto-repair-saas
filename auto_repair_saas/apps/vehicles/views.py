@@ -1,6 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy, reverse
 from django.views import View
+from django.views.generic import UpdateView, DeleteView
 
 from auto_repair_saas.apps.vehicles.forms import NewVehicleForm
 from auto_repair_saas.apps.vehicles.models import Vehicle
@@ -24,24 +29,33 @@ class VehiclesView(LoginRequiredMixin, View):
         if form.is_valid():
             try:
                 Vehicle.objects.create(**form.cleaned_data)
-                vehicles = Vehicle.objects.all()
-                return render(
-                    request, self.template_name, {'vehicles': vehicles}
-                )
+                messages.success(request, 'Vehicle created.')
+                return HttpResponseRedirect(reverse('vehicles'))
             except Exception as e:
-                error = str(e)
-                return render(
-                    request, self.template_name, {
-                        'form': form, 'error': error
-                    }
-                )
+                messages.error(request, str(e))
+                return HttpResponseRedirect(reverse('vehicles'))
         else:
             error = 'Form is invalid.'
-            return render(
-                request, self.template_name, {
-                    'form': form, 'error': error
-                }
-            )
+            messages.error(request, error)
+            return HttpResponseRedirect(reverse('vehicles'))
+
+
+class UpdateVehicleView(SuccessMessageMixin, UpdateView):
+    model = Vehicle
+    form = NewVehicleForm()
+    fields = [*form.fields]
+    success_url = reverse_lazy('vehicles')
+    success_message = 'Vehicle updated.'
+
+
+class DeleteVehicleView(SuccessMessageMixin, DeleteView):
+    model = Vehicle
+    success_url = reverse_lazy('vehicles')
+    success_message = 'Vehicle deleted.'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(DeleteVehicleView, self).delete(request, *args, **kwargs)
 
 
 def load_client_vehicles(request):

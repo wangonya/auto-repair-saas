@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <span class="uk-h2">Vehicles</span>
-        <a class="uk-button uk-button-primary uk-float-right" uk-toggle="target: #new-vehicle-modal">New Vehicle</a>
+    <div class="row">
+        <div class="col">
+            <h4>Vehicles</h4>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    data-mdb-toggle="modal"
+                    data-mdb-target="#vehicleFormModal">New Vehicle
+            </button>
+        </div>
     </div>
 
     {#  vehicles table  #}
-    <table class="uk-table uk-table-hover uk-table-divider">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>Number Plate</th>
@@ -20,52 +27,134 @@
                 <td>{{ vehicle }}</td>
                 <td>{{ vehicle.owner }}</td>
                 <td>
-                    <ul class="uk-iconnav">
-                        <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a></li>
-                        <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
-                    </ul>
+                    <a href="#" role="button" title="Edit"
+                       data-mdb-toggle="modal"
+                       data-mdb-target="#vehicleFormModal"
+                       data-mdb-mode="edit"
+                       data-mdb-vehicle-id="{{ vehicle.id }}"
+                       data-mdb-vehicle-number_plate="{{ vehicle }}"
+                       data-mdb-vehicle-owner="{{ vehicle.owner.id }}"
+                    ><i class="fas fa-edit p-2"></i></a>
+                    <a href="#" role="button" title="Delete"
+                       data-mdb-toggle="modal"
+                       data-mdb-target="#confirmDeleteVehicleModal"
+                       data-mdb-vehicle-id="{{ vehicle.id }}"
+                    ><i class="fas fa-trash-alt text-danger p-2"></i></a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    {#  new vehicle modal  #}
-    <div id="new-vehicle-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <form action="/vehicles/" method="post" class="uk-grid-small uk-form-stacked center" uk-grid>
-                <legend class="uk-legend">Create a new vehicle</legend>
-                {% csrf_token %}
-                <div class="uk-width-1-2">
-                    <label class="uk-form-label" for="id_number_plate">Number Plate</label>
-                    {% if form.number_plate.errors %}
-                        <ul class="uk-list uk-list-disc uk-list-danger">
-                            {% for error in form.number_plate.errors %}
-                                <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    <div class="uk-inline">
-                        {{ form.number_plate }}
-                    </div>
+    {#  vehicle modal  #}
+    <div
+            class="modal fade"
+            id="vehicleFormModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="vehicle-modal-title"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vehicle-modal-title">Create vehicle</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-                <div class="uk-width-1-2">
-                    <label class="uk-form-label" for="id_owner">Owner</label>
-                    {% if form.owner.errors %}
-                        <ul class="uk-list uk-list-disc uk-list-danger">
-                            {% for error in form.owner.errors %}
-                                <li class="uk-text-danger"><strong>{{ error|escape }}</strong></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    <div class="uk-inline">
-                        {{ form.owner }}
-                    </div>
+                <div class="modal-body">
+                    <form action="{% url 'vehicles' %}" method="post" id="vehicle-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_number_plate">Number Plate</label>
+                                {{ form.number_plate }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_owner">Owner</label>
+                                {{ form.owner }}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-primary"
+                                    id="submit-vehicle-form">Create</button></span>
+                        </div>
+                    </form>
                 </div>
-                <div class="uk-inline uk-margin">
-                    <button class="uk-button uk-button-primary" type="submit">Create</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+
+    {# delete confirmation modal #}
+    <div
+            class="modal fade"
+            id="confirmDeleteVehicleModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="confirm-delete-vehicle-form" method="post">
+                        {% csrf_token %}
+                        <p class="p-3">Are you sure you want to delete this vehicle? This action can not be undone.</p>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vehicleFormModal = document.getElementById('vehicleFormModal')
+        vehicleFormModal.addEventListener('show.mdb.modal', event => {
+            const button = event.relatedTarget
+            const modalMode = button.getAttribute('data-mdb-mode')
+            if (modalMode === 'edit') {
+                const vehicleId = button.getAttribute('data-mdb-vehicle-id')
+                const vehicleNumberPlate = button.getAttribute('data-mdb-vehicle-number_plate')
+                const vehicleOwner = button.getAttribute('data-mdb-vehicle-owner')
+
+                const modalTitle = vehicleFormModal.querySelector('#vehicle-modal-title')
+                const modalVehicleNumberPlate = vehicleFormModal.querySelector('#id_number_plate')
+                const modalVehicleOwner = vehicleFormModal.querySelector('#id_owner')
+
+                modalTitle.textContent = `Edit vehicle`
+                modalVehicleNumberPlate.value = vehicleNumberPlate
+                modalVehicleOwner.value = vehicleOwner
+
+                const form = document.getElementById("vehicle-form")
+                form.action = `/vehicles/update/${vehicleId}/`
+                const submitButton = document.getElementById("submit-vehicle-form")
+                submitButton.textContent = 'Save'
+            }
+        })
+
+        const confirmDeleteVehicleModal = document.getElementById('confirmDeleteVehicleModal')
+        confirmDeleteVehicleModal.addEventListener('show.mdb.modal', event => {
+            const form = document.getElementById("confirm-delete-vehicle-form")
+            const button = event.relatedTarget
+            const vehicleId = button.getAttribute('data-mdb-vehicle-id')
+            form.action = `/vehicles/delete/${vehicleId}/`
+        })
+    </script>
 {% endblock %}
