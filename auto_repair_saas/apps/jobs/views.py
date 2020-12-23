@@ -27,7 +27,7 @@ class JobsView(LoginRequiredMixin, View):
         if form.is_valid():
             try:
                 Job.objects.create(**form.cleaned_data)
-                messages.success(request, 'New job created.')
+                messages.success(request, 'Job created.')
                 return HttpResponseRedirect(reverse('jobs'))
             except Exception as e:
                 messages.error(request, str(e))
