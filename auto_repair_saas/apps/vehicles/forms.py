@@ -4,8 +4,8 @@ from auto_repair_saas.apps.contacts.models import Contact
 
 
 class NewVehicleForm(forms.Form):
-    select_attrs = {'class': 'uk-select uk-form-width-medium'}
-    input_attrs = {'class': 'uk-input uk-form-width-medium'}
+    select_attrs = {'class': 'form-control'}
+    input_attrs = {'class': 'form-control'}
 
     number_plate = forms.CharField(widget=forms.TextInput(attrs=input_attrs))
     owner = forms.ModelChoiceField(
