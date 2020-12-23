@@ -3,7 +3,7 @@ from django.db import models
 
 class Contact(models.Model):
     CONTACT_TYPE_CHOICES = (
-        ('customer', 'Customer'), ('supplier', 'Supplier'))
+        ('client', 'Client'), ('supplier', 'Supplier'))
     contact_type = models.CharField(
         choices=CONTACT_TYPE_CHOICES, max_length=8, null=False, blank=False
     )

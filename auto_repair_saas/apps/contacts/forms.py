@@ -6,8 +6,8 @@ class NewContactForm(forms.Form):
         ('client', 'Client'), ('supplier', 'Supplier'),
     )
 
-    select_attrs = {'class': 'uk-select uk-form-width-medium'}
-    input_attrs = {'class': 'uk-input uk-form-width-medium'}
+    select_attrs = {'class': 'form-control'}
+    input_attrs = {'class': 'form-control'}
 
     contact_type = forms.CharField(
         widget=forms.Select(choices=CONTACT_TYPE_CHOICES, attrs=select_attrs)
@@ -16,7 +16,11 @@ class NewContactForm(forms.Form):
     phone = forms.CharField(widget=forms.TextInput(
         attrs={
             **input_attrs,
-            **{'type': 'number', 'uk-tooltip': "07xxxxxxxx"}
+            **{
+                'type': 'number',
+                'title': "07xxxxxxxx",
+                'data-mdb-toggle': "tooltip"
+            }
         }), required=False
     )
     email = forms.EmailField(
