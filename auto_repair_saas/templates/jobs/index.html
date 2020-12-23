@@ -1,28 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <span class="uk-h2">Jobs</span>
-        <a class="uk-button uk-button-primary uk-float-right" href="/jobs/new">New Job</a>
+    <div class="row">
+        <div class="col">
+            <h4>Jobs</h4>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    data-mdb-toggle="modal"
+                    data-mdb-target="#newJobModal">New Job
+            </button>
+        </div>
     </div>
 
     {#  job tabs  #}
-    <ul uk-tab>
-        <li><a href="#">Estimates</a></li>
-        <li><a href="#">In Progress</a></li>
-        <li><a href="#">Done</a></li>
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link active"
+                    id="tab-1"
+                    data-mdb-toggle="tab"
+                    href="#estimates-tab"
+                    role="tab"
+                    aria-controls="estimates-tab"
+                    aria-selected="true"
+            >Estimates</a
+            >
+        </li>
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link"
+                    id="tab-2"
+                    data-mdb-toggle="tab"
+                    href="#in-progress-tab"
+                    role="tab"
+                    aria-controls="in-progress-tab"
+                    aria-selected="false"
+            >In Progress</a
+            >
+        </li>
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link"
+                    id="tab-3"
+                    data-mdb-toggle="tab"
+                    href="#done-tab"
+                    role="tab"
+                    aria-controls="done-tab"
+                    aria-selected="false"
+            >Done</a
+            >
+        </li>
     </ul>
 
     {#  job tables  #}
-    <ul class="uk-switcher uk-margin">
-        <li>
-            <table class="uk-table uk-table-hover uk-table-divider">
+    <div class="tab-content">
+        <div
+                class="tab-pane fade show active"
+                id="estimates-tab"
+                role="tabpanel"
+                aria-labelledby="tab-1"
+        >
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>Job #</th>
                     <th>Created On</th>
                     <th>Due Start Date</th>
                     <th>Due End Date</th>
-                    <th>Customer</th>
+                    <th>Client</th>
                     <th>Vehicle</th>
                     <th>Charged</th>
                     <th>Action</th>
@@ -30,26 +75,439 @@
                 </thead>
                 <tbody>
                 {% for job in jobs %}
-                <tr>
-                    <td>{{ job.id }}</td>
-                    <td>{{ job.created_on }}</td>
-                    <td>{{ job.due_start_date|default_if_none:"-" }}</td>
-                    <td>{{ job.due_end_date|default_if_none:"-" }}</td>
-                    <td>{{ job.client }}</td>
-                    <td>{{ job.vehicle }}</td>
-                    <td>{{ job.charged }}</td>
-                    <td>
-                        <ul class="uk-iconnav">
-                            <li uk-tooltip="View"><a href="#" uk-icon="icon: expand" class="uk-text-primary"></a></li>
-                            <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a>
-                            </li>
-                            <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
-                        </ul>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{ job.id }}</td>
+                        <td>{{ job.created_on }}</td>
+                        <td>{{ job.due_start_date|default_if_none:"-" }}</td>
+                        <td>{{ job.due_end_date|default_if_none:"-" }}</td>
+                        <td>{{ job.client }}</td>
+                        <td>{{ job.vehicle }}</td>
+                        <td>{{ job.charged }}</td>
+                        <td>
+                            <a href="#" role="button" title="View"
+                               data-mdb-toggle="modal"
+                               data-mdb-target="#viewJobModal"
+                               data-mdb-job-id="{{ job.id }}"
+                               data-mdb-job-created_on="{{ job.created_on }}"
+                               data-mdb-job-due_start_date="{{ job.due_start_date }}"
+                               data-mdb-job-due_end_date="{{ job.due_end_date }}"
+                               data-mdb-job-client="{{ job.client }}"
+                               data-mdb-job-vehicle="{{ job.vehicle }}"
+                               data-mdb-job-charged="{{ job.charged }}"
+                               data-mdb-job-description="{{ job.description }}"
+                            ><i class="fas fa-external-link-alt p-2"></i></a>
+                            <a href="#" role="button" title="Edit"
+                               data-mdb-toggle="modal"
+                               data-mdb-target="#editJobModal"
+                               data-mdb-job-id="{{ job.id }}"
+                               data-mdb-job-due_start_date="{{ job.due_start_date }}"
+                               data-mdb-job-due_end_date="{{ job.due_end_date }}"
+                               data-mdb-job-client="{{ job.client.id }}"
+                               data-mdb-job-vehicle="{{ job.vehicle.id }}"
+                               data-mdb-job-charged="{{ job.charged }}"
+                               data-mdb-job-description="{{ job.description }}"
+                            ><i class="fas fa-edit p-2"></i></a>
+                            <a href="#" role="button" title="Delete"
+                               data-mdb-toggle="modal"
+                               data-mdb-target="#confirmDeleteJobModal"
+                               data-mdb-job-id="{{ job.id }}"
+                            ><i class="fas fa-trash-alt text-danger p-2"></i></a>
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
-        </li>
-    </ul>
+        </div>
+        <div class="tab-pane fade" id="in-progress-tab" role="tabpanel" aria-labelledby="tab-2">
+            Tab 2 content
+        </div>
+        <div class="tab-pane fade" id="done-tab" role="tabpanel" aria-labelledby="tab-3">
+            Tab 3 content
+        </div>
+    </div>
+
+    {#  new job modal  #}
+    <div
+            class="modal fade"
+            id="newJobModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Create new job</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'jobs' %}" method="post"
+                          id="new-job-form"
+                          data-vehicles-url="{% url 'load-vehicles' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_client">Client</label>
+                                {{ form.client }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_vehicle">Vehicle</label>
+                                {{ form.vehicle }}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_due_start_date">Due Start Date</label>
+                                <div class="form-outline">
+                                    {{ form.due_start_date }}
+                                </div>
+                            </div>
+                            <div class="col"><label class="form-label" for="id_due_end_date">Due End Date</label>
+                                <div class="form-outline">
+                                    {{ form.due_end_date }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_assigned">Assigned To</label>
+                                {{ form.assigned }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_charged">Total Charged</label>
+                                <div class="form-outline">
+                                    {{ form.charged }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="form-label" for="id_description">Description of Work</label>
+                                <div class="form-outline">
+                                    {{ form.description }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-primary">Create</button></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#  view job modal  #}
+    <div
+            class="modal fade"
+            id="viewJobModal"
+            tabindex="-1"
+            aria-labelledby="view-modal-title"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="view-modal-title"></h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col mb-2">
+                            <span class="fw-bold">Client: </span><span id="view-modal-client"></span>
+                        </div>
+                        <div class="col mb-2">
+                            <span class="fw-bold">Vehicle: </span><span id="view-modal-vehicle"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <span class="fw-bold">Due Start Date: </span><span id="view-modal-due-start-date"></span>
+                        </div>
+                        <div class="col mb-2">
+                            <span class="fw-bold">Due End Date: </span><span id="view-modal-due-end-date"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <span class="fw-bold">Assigned To: </span><span id="view-modal-assigned"></span>
+                        </div>
+                        <div class="col mb-2">
+                            <span class="fw-bold">Total Charged: </span><span id="view-modal-charged"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <span class="fw-bold">Description of Work: </span>
+                            <p id="view-modal-description"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#  edit job modal  #}
+    <div
+            class="modal fade"
+            id="editJobModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="edit-modal-title"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-modal-title"></h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" id="edit-job-form"
+                          data-vehicles-url="{% url 'load-vehicles' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_client">Client</label>
+                                {{ form.client }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_vehicle">Vehicle</label>
+                                {{ form.vehicle }}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_due_start_date">Due Start Date</label>
+                                <div class="form-outline">
+                                    {{ form.due_start_date }}
+                                </div>
+                            </div>
+                            <div class="col"><label class="form-label" for="id_due_end_date">Due End Date</label>
+                                <div class="form-outline">
+                                    {{ form.due_end_date }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_assigned">Assigned To</label>
+                                {{ form.assigned }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_charged">Total Charged</label>
+                                <div class="form-outline">
+                                    {{ form.charged }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="form-label" for="id_description">Description of Work</label>
+                                <div class="form-outline">
+                                    {{ form.description }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# delete confirmation modal #}
+    <div
+            class="modal fade"
+            id="confirmDeleteJobModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="confirm-delete-job-form" method="post">
+                        {% csrf_token %}
+                        <p class="p-3">Are you sure you want to delete this job? This action can not be undone.</p>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        {# format dates for prefilling date inputs while in edit mode #}
+        const formatDate = date => {
+            try {
+                let newDate = new Date(date)
+                return new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000))
+                    .toISOString()
+                    .split("T")[0]
+            } catch (err) {
+                return ''
+            }
+        }
+
+        {# load vehicles data depending on selected client #}
+        const form = document.getElementById("new-job-form")
+        const clientSelect = document.getElementById('id_client')
+        const vehicleSelect = document.getElementById('id_vehicle')
+        vehicleSelect.disabled = clientSelect.value === ''
+        const url = form.dataset.vehiclesUrl
+        clientSelect.onchange = event => {
+            fetch(`${url}?client=${clientSelect.value}`)
+                .then(response => response.text())
+                .then(html => {
+                    vehicleSelect.innerHTML = html
+                })
+                .catch((error) => {
+                })
+            vehicleSelect.disabled = clientSelect.value === ''
+        }
+
+        {#  load job data in view modal  #}
+        const viewJobModal = document.getElementById('viewJobModal')
+        viewJobModal.addEventListener('show.mdb.modal', (event) => {
+            // Button that triggered the modal
+            const button = event.relatedTarget
+            // Extract info from data-mdb-* attributes
+            const jobId = button.getAttribute('data-mdb-job-id')
+            const jobClient = button.getAttribute('data-mdb-job-client')
+            const jobVehicle = button.getAttribute('data-mdb-job-vehicle')
+            const jobDueStartDate = button.getAttribute('data-mdb-job-due_start_date')
+            const jobDueEndDate = button.getAttribute('data-mdb-job-due_end_date')
+            const jobAssigned = button.getAttribute('data-mdb-job-assigned')
+            const jobCharged = button.getAttribute('data-mdb-job-charged')
+            const jobDescription = button.getAttribute('data-mdb-job-description')
+            // Update the modal's content.
+            const modalTitle = viewJobModal.querySelector('#view-modal-title')
+            const modalClient = viewJobModal.querySelector('#view-modal-client')
+            const modalVehicle = viewJobModal.querySelector('#view-modal-vehicle')
+            const modalDueStartDate = viewJobModal.querySelector('#view-modal-due-start-date')
+            const modalDueEndDate = viewJobModal.querySelector('#view-modal-due-end-date')
+            const modalAssigned = viewJobModal.querySelector('#view-modal-assigned')
+            const modalCharged = viewJobModal.querySelector('#view-modal-charged')
+            const modalDescription = viewJobModal.querySelector('#view-modal-description')
+
+            modalTitle.textContent = `View job (Job #${jobId})`
+            modalClient.textContent = jobClient
+            modalVehicle.textContent = jobVehicle
+            modalDueStartDate.textContent = jobDueStartDate !== 'None' ? jobDueStartDate : '-'
+            modalDueEndDate.textContent = jobDueEndDate !== 'None' ? jobDueEndDate : '-'
+            modalAssigned.textContent = jobAssigned !== null ? jobAssigned : '-'
+            modalCharged.textContent = jobCharged
+            modalDescription.textContent = jobDescription !== null ? jobDescription : '-'
+        })
+
+        {#  load job data in edit modal  #}
+        const editJobModal = document.getElementById('editJobModal')
+        editJobModal.addEventListener('show.mdb.modal', event => {
+            const button = event.relatedTarget
+            const jobId = button.getAttribute('data-mdb-job-id')
+            const jobClient = button.getAttribute('data-mdb-job-client')
+            const jobVehicle = button.getAttribute('data-mdb-job-vehicle')
+            let jobDueStartDate = button.getAttribute('data-mdb-job-due_start_date')
+            jobDueStartDate = formatDate(jobDueStartDate)
+            let jobDueEndDate = button.getAttribute('data-mdb-job-due_end_date')
+            jobDueEndDate = formatDate(jobDueEndDate)
+            const jobAssigned = button.getAttribute('data-mdb-job-assigned')
+            const jobCharged = button.getAttribute('data-mdb-job-charged')
+            const jobDescription = button.getAttribute('data-mdb-job-description')
+
+            const modalTitle = editJobModal.querySelector('#edit-modal-title')
+            const modalClient = editJobModal.querySelector('#edit-job-form').querySelector('#id_client')
+            const modalVehicle = editJobModal.querySelector('#edit-job-form').querySelector('#id_vehicle')
+            const modalDueStartDate = editJobModal.querySelector('#edit-job-form').querySelector('#id_due_start_date')
+            const modalDueEndDate = editJobModal.querySelector('#edit-job-form').querySelector('#id_due_end_date')
+            const modalAssigned = editJobModal.querySelector('#edit-job-form').querySelector('#id_assigned')
+            const modalCharged = editJobModal.querySelector('#edit-job-form').querySelector('#id_charged')
+            const modalDescription = editJobModal.querySelector('#edit-job-form').querySelector('#id_description')
+
+            modalTitle.textContent = `Edit job (Job #${jobId})`
+            modalClient.value = jobClient
+            modalVehicle.value = jobVehicle
+            modalDueStartDate.value = jobDueStartDate !== 'None' ? jobDueStartDate : '-'
+            modalDueEndDate.value = jobDueEndDate !== 'None' ? jobDueEndDate : '-'
+            modalAssigned.value = jobAssigned !== null ? jobAssigned : '-'
+            modalCharged.value = jobCharged
+            modalDescription.value = jobDescription !== null ? jobDescription : '-'
+
+            {# load vehicles data depending on selected client #}
+            const form = document.getElementById("edit-job-form")
+            form.action = `/jobs/update/${jobId}/`
+            const clientSelect = modalClient
+            const vehicleSelect = modalVehicle
+            const url = form.dataset.vehiclesUrl
+            clientSelect.onchange = event => {
+                fetch(`${url}?client=${clientSelect.value}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        vehicleSelect.innerHTML = html
+                    })
+                    .catch((error) => {
+                    });
+            }
+        })
+
+        const confirmDeleteJobModal = document.getElementById('confirmDeleteJobModal')
+        confirmDeleteJobModal.addEventListener('show.mdb.modal', event => {
+            const form = document.getElementById("confirm-delete-job-form")
+            const button = event.relatedTarget
+            const jobId = button.getAttribute('data-mdb-job-id')
+            form.action = `/jobs/delete/${jobId}/`
+        })
+    </script>
 {% endblock %}

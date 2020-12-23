@@ -3,23 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Auto Repair Shop Manager</title>
-    <!-- UIkit CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/css/uikit.min.css"/>
+    <!-- Font Awesome -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+            rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.css"
+            rel="stylesheet"
+    />
+
+    <!-- Izitoast -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css"
+          integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag=="
+          crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"
+            integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA=="
+            crossorigin="anonymous">
+    </script>
+
     <style>
-        input.long-input {
-            width: 310px !important;
-        }
-
-        select.long-input {
-            width: 310px !important;
-        }
-
-        form.center {
-            margin-left: auto;
-            margin-right: auto;
-            width: 650px;
-        }
-
         {#  remove arrow from number input fields  #}
 
         /* Chrome, Safari, Edge, Opera */
@@ -37,64 +46,106 @@
 </head>
 <body>
 {% if user.is_authenticated %}
-    <nav class="uk-navbar-container uk-margin" uk-navbar>
-        <div class="uk-navbar-left">
-            <a class="uk-navbar-item uk-logo" href="/">Logo</a>
-        </div>
-        <div class="uk-navbar-right">
-            <ul class="uk-navbar-nav">
-                <li>
-                    <a href="/jobs">
-                        Jobs
-                    </a>
-                </li>
-                <li>
-                    <a href="/contacts">
-                        Contacts
-                    </a>
-                </li>
-                <li>
-                    <a href="/vehicles">
-                        Vehicles
-                    </a>
-                </li>
-                <li>
-                    <a href="/staff">
-                        Staff
-                    </a>
-                </li>
-                <li>
-                    <a href="/profile">
-                        Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="/auth/logout" class="uk-text-danger">
-                        Logout
-                    </a>
-                </li>
-            </ul>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">ARS Manager</a>
+            </div>
+            <div class="container-fluid">
+                <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-mdb-toggle="collapse"
+                        data-mdb-target="#navbarMain"
+                        aria-controls="navbarMain"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <!-- Left links -->
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="/jobs" class="nav-link">
+                                Jobs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/contacts" class="nav-link">
+                                Contacts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/vehicles" class="nav-link">
+                                Vehicles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/staff" class="nav-link">
+                                Staff
+                            </a>
+                        </li>
+                        <!-- Avatar -->
+                        <li class="nav-item dropdown">
+                            <a
+                                    class="nav-link dropdown-toggle d-flex align-items-center"
+                                    href="#"
+                                    id="navbarDropdownMenuLink"
+                                    role="button"
+                                    data-mdb-toggle="dropdown"
+                                    aria-expanded="false"
+                            >
+                                <img
+                                        src="https://ui-avatars.com/api/?background=random&name={{ user.username }}&length=1"
+                                        class="rounded-circle"
+                                        height="25"
+                                        alt="profile"
+                                        loading="lazy"
+                                />
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/profile">My profile</a></li>
+                                <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </nav>
 {% endif %}
-<div class="uk-container">
-    {% if error %}
-        <div class="uk-alert-danger uk-position-medium uk-position-top-right uk-animation-shake" uk-alert
-             style="max-width: 350px">
-            <a class="uk-alert-close" uk-close></a>
-            <p>{{ error }}</p>
-        </div>
-    {% elif success %}
-        <div class="uk-alert-success uk-position-medium uk-position-top-right uk-animation-slide-right-medium" uk-alert
-             style="max-width: 350px">
-            <a class="uk-alert-close" uk-close></a>
-            <p>{{ success }}</p>
-        </div>
+<div class="container p-5">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <script>
+                    iziToast.error({
+                        title: 'Error',
+                        message: '{{ message }}',
+                        maxWidth: 310
+                    })
+                </script>
+            {% elif message.tags == 'success' %}
+                <script>
+                    iziToast.success({
+                        title: 'Success',
+                        message: '{{ message }}',
+                        maxWidth: 310
+                    })
+                </script>
+            {% endif %}
+        {% endfor %}
     {% endif %}
     {% block content %}{% endblock %}
 </div>
-<!-- UIkit JS -->
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/js/uikit.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.16/dist/js/uikit-icons.min.js"></script>
+
+<!-- MDB -->
+<script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.js"
+></script>
 </body>
 </html>

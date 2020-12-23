@@ -12,7 +12,12 @@ class VehiclesView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        return render(request, self.template_name, {'form': form})
+        vehicles = Vehicle.objects.all()
+        context = {
+            'form': form,
+            'vehicles': vehicles
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)

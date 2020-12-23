@@ -15,16 +15,18 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Table Data</td>
-            <td>Table Data</td>
-            <td>
-                <ul class="uk-iconnav">
-                    <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a></li>
-                    <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
-                </ul>
-            </td>
-        </tr>
+        {% for vehicle in vehicles %}
+            <tr>
+                <td>{{ vehicle }}</td>
+                <td>{{ vehicle.owner }}</td>
+                <td>
+                    <ul class="uk-iconnav">
+                        <li uk-tooltip="Edit"><a href="#" uk-icon="icon: file-edit" class="uk-text-primary"></a></li>
+                        <li uk-tooltip="Delete"><a href="#" uk-icon="icon: trash" class="uk-text-danger"></a></li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 

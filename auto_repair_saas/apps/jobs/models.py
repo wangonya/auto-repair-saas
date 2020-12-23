@@ -5,6 +5,9 @@ from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
 class Job(models.Model):
+    class Meta:
+        ordering = ('-created_on',)
+
     status_type_choices = (('pending', 'Pending'),
                            ('in_progress', 'In progress'),
                            ('done', 'Done'))

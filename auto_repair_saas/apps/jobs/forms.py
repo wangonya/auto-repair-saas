@@ -7,7 +7,6 @@ from auto_repair_saas.apps.vehicles.models import Vehicle
 class NewJobForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['vehicle'].queryset = Vehicle.objects.none()
         if 'client' in self.data:
             try:
                 owner_id = int(self.data.get('client'))
@@ -19,16 +18,20 @@ class NewJobForm(forms.Form):
 
     MECHANIC_CHOICES = [('', 'Select a mechanic'), ]
 
-    select_attrs = {'class': 'uk-select uk-form-width-medium'}
-    input_attrs = {'class': 'uk-input uk-form-width-medium'}
-    date_attrs = {'class': 'uk-input uk-form-width-medium', 'type': 'date'}
+    select_attrs = {'class': 'form-control'}
+    input_attrs = {'class': 'form-control'}
+    date_attrs = {
+        'class': 'form-control',
+        'type': 'date',
+        'placeholder': 'Select date'
+    }
 
     client = forms.ModelChoiceField(
         queryset=Contact.objects.filter(contact_type='client'),
         widget=forms.Select(attrs=select_attrs)
     )
     vehicle = forms.ModelChoiceField(
-        queryset=Vehicle.objects.none(),
+        queryset=Vehicle.objects.all(),
         widget=forms.Select(attrs=select_attrs)
     )
     due_start_date = forms.DateField(
@@ -38,8 +41,7 @@ class NewJobForm(forms.Form):
         widget=forms.DateInput(attrs=date_attrs), required=False
     )
     description = forms.CharField(widget=forms.Textarea(
-        attrs={'class': 'uk-textarea', 'rows': '3'}),
-        required=False
+        attrs={**input_attrs, **{'rows': 3}}), required=False
     )
     assigned = forms.CharField(
         widget=forms.Select(attrs=select_attrs, choices=MECHANIC_CHOICES, ),
