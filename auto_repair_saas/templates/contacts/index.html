@@ -5,7 +5,10 @@
             <h4>Contacts</h4>
         </div>
         <div class="col">
-            <a class="btn btn-primary float-end" href="{% url 'new-contact' %}" role="button">New Contact</a>
+            <button class="btn btn-primary float-end"
+                    data-mdb-toggle="modal"
+                    data-mdb-target="#contactFormModal">New Contact
+            </button>
         </div>
     </div>
 
@@ -48,14 +51,38 @@
             <div class="row">
                 {% for client in clients %}
                     <div class="col-md-3">
-                        <div class="card">
+                        <div class="card mb-4">
                             <div class="card-body">
-                                <div class="card-title d-flex align-items-center">
+                                <div class="card-title">
                                     <img class="rounded-circle"
                                          height="35"
                                          loading="lazy" alt="{{ client.name }}"
                                          src="https://ui-avatars.com/api/?background=random&name={{ client.name }}&length=1">
                                     <span class="fs-5 ps-2">{{ client.name }}</span>
+                                    <div class="float-end">
+                                        <div class="dropdown pt-1">
+                                            <a href="#" role="button"
+                                               data-mdb-toggle="dropdown"
+                                               aria-expanded="false"
+                                            ><i class="fas fa-ellipsis-h"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#"
+                                                       data-mdb-toggle="modal"
+                                                       data-mdb-target="#contactFormModal"
+                                                       data-mdb-mode="edit"
+                                                       data-mdb-contact-id="{{ client.id }}"
+                                                       data-mdb-contact-contact_type="{{ client.contact_type }}"
+                                                       data-mdb-contact-phone="{{ client.phone }}"
+                                                       data-mdb-contact-email="{{ client.email }}"
+                                                       data-mdb-contact-name="{{ client.name }}">Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="#"
+                                                       data-mdb-toggle="modal"
+                                                       data-mdb-target="#confirmDeleteContactModal"
+                                                       data-mdb-contact-id="{{ client.id }}">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-text ps-2">
                                     <i class="fas fa-envelope"></i>
@@ -91,14 +118,38 @@
             <div class="row">
                 {% for supplier in suppliers %}
                     <div class="col-md-3">
-                        <div class="card">
+                        <div class="card mb-4">
                             <div class="card-body">
-                                <div class="card-title d-flex align-items-center">
+                                <div class="card-title">
                                     <img class="rounded-circle"
                                          height="35"
                                          loading="lazy" alt="{{ supplier.name }}"
                                          src="https://ui-avatars.com/api/?background=random&name={{ supplier.name }}&length=1">
                                     <span class="fs-5 ps-2">{{ supplier.name }}</span>
+                                    <div class="float-end">
+                                        <div class="dropdown pt-1">
+                                            <a href="#" role="button"
+                                               data-mdb-toggle="dropdown"
+                                               aria-expanded="false"
+                                            ><i class="fas fa-ellipsis-h"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#"
+                                                       data-mdb-toggle="modal"
+                                                       data-mdb-target="#contactFormModal"
+                                                       data-mdb-mode="edit"
+                                                       data-mdb-contact-id="{{ supplier.id }}"
+                                                       data-mdb-contact-contact_type="{{ supplier.contact_type }}"
+                                                       data-mdb-contact-phone="{{ supplier.phone }}"
+                                                       data-mdb-contact-email="{{ supplier.email }}"
+                                                       data-mdb-contact-name="{{ supplier.name }}">Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="#"
+                                                       data-mdb-toggle="modal"
+                                                       data-mdb-target="#confirmDeleteContactModal"
+                                                       data-mdb-contact-id="{{ supplier.id }}">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-text ps-2">
                                     <i class="fas fa-envelope"></i>
@@ -126,4 +177,138 @@
             </div>
         </div>
     </div>
+
+    {#  contact form modal  #}
+    <div
+            class="modal fade"
+            id="contactFormModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="contact-form-modal-title"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contact-form-modal-title">Create contact</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'contacts' %}" method="post"
+                          id="contact-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_name">Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_contact_type">Contact Type</label>
+                                {{ form.contact_type }}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_email">Email</label>
+                                <div class="form-outline">
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_phone">Phone</label>
+                                <div class="form-outline">
+                                    {{ form.phone }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                                <button type="submit" class="btn btn-primary" id="submit-contact-form">Create</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# delete confirmation modal #}
+    <div
+            class="modal fade"
+            id="confirmDeleteContactModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="confirm-delete-contact-form" method="post">
+                        {% csrf_token %}
+                        <p class="p-3">Are you sure you want to delete this contact? This action can not be undone.</p>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const contactFormModal = document.getElementById('contactFormModal')
+        contactFormModal.addEventListener('show.mdb.modal', event => {
+            const button = event.relatedTarget
+            const modalMode = button.getAttribute('data-mdb-mode')
+            if (modalMode === 'edit') {
+                const contactId = button.getAttribute('data-mdb-contact-id')
+                const contactName = button.getAttribute('data-mdb-contact-name')
+                const contactEmail = button.getAttribute('data-mdb-contact-email')
+                const contactPhone = button.getAttribute('data-mdb-contact-phone')
+                const contactType = button.getAttribute('data-mdb-contact-contact_type')
+
+                const modalTitle = contactFormModal.querySelector('#contact-form-modal-title')
+                const modalContactName = contactFormModal.querySelector('#id_name')
+                const modalContactEmail = contactFormModal.querySelector('#id_email')
+                const modalContactPhone = contactFormModal.querySelector('#id_phone')
+                const modalContactType = contactFormModal.querySelector('#id_contact_type')
+
+                modalTitle.textContent = `Edit contact`
+                modalContactName.value = contactName
+                modalContactEmail.value = contactEmail !== 'None' ? contactEmail : null
+                modalContactPhone.value = contactPhone
+                modalContactType.value = contactType
+
+                const form = document.getElementById("contact-form")
+                form.action = `/contacts/update/${contactId}/`
+                const submitButton = document.getElementById("submit-contact-form")
+                submitButton.textContent = 'Save'
+            }
+        })
+
+        const confirmDeleteContactModal = document.getElementById('confirmDeleteContactModal')
+        confirmDeleteContactModal.addEventListener('show.mdb.modal', event => {
+            const form = document.getElementById("confirm-delete-contact-form")
+            const button = event.relatedTarget
+            const contactId = button.getAttribute('data-mdb-contact-id')
+            form.action = `/contacts/delete/${contactId}/`
+        })
+    </script>
 {% endblock %}
