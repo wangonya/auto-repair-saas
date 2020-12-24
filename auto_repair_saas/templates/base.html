@@ -19,6 +19,14 @@
             rel="stylesheet"
     />
 
+    <!-- chartjs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css"
+          integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w=="
+          crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+            integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+            crossorigin="anonymous"></script>
+
     <!-- Izitoast -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css"
           integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag=="
@@ -42,82 +50,101 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+
+        img.center {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 40px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-menu-button {
+            background-color: #fff;
+            text-align: left;
+        }
+
+        button.active {
+            background-color: #0c56d0 !important;
+        }
     </style>
 </head>
 <body>
 {% if user.is_authenticated %}
-    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">ARS Manager</a>
-            </div>
-            <div class="container-fluid">
-                <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-mdb-toggle="collapse"
-                        data-mdb-target="#navbarMain"
-                        aria-controls="navbarMain"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
+    <style>
+        .main {
+            height: 100vh;
+            margin-left: 200px;
+            width: calc(100% - 200px);
+            background-color: #f5f8fb;
+        }
+    </style>
+    <nav class="sidebar shadow-2">
+        <div class="container-fluid">
+            <img alt="logo"
+                 loading="lazy"
+                 class="center"
+                 src="https://img.icons8.com/clouds/100/000000/toolbox.png"/>
+        </div>
+        <div class="container-fluid">
+            <div class="d-grid" id="navbarMain">
+                <a href="{% url 'dashboard' %}"
+                   class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-tachometer-alt me-3"></i>dashboard</a
                 >
-                    <i class="fas fa-bars"></i>
+                <a href="{% url 'jobs' %}"
+                   class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button">
+                    <i class="fas fa-briefcase me-3"></i>Jobs
+                </a>
+                <a href="{% url 'contacts' %}" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-users me-3"></i>Contacts
+                </a>
+                <a href="{% url 'vehicles' %}" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-car me-3"></i>Vehicles
+                </a>
+                <a href="/" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-user-friends me-3"></i>Staff
+                </a>
+                <a href="/" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-user-alt me-3"></i>Profile
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-light shadow-0 text-danger btn-lg nav-menu-button"
+                   role="button"
+                ><i class="fas fa-sign-out-alt me-3"></i>logout
+                </a>
+                <button class="btn btn-info mt-5" onclick="seedData()"
+                        data-mdb-toggle="tooltip"
+                        data-mdb-placement="top"
+                        title="Generate demo data">Seed data
                 </button>
-
-                <!-- Collapsible wrapper -->
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- Left links -->
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a href="/jobs" class="nav-link">
-                                Jobs
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/contacts" class="nav-link">
-                                Contacts
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/vehicles" class="nav-link">
-                                Vehicles
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/staff" class="nav-link">
-                                Staff
-                            </a>
-                        </li>
-                        <!-- Avatar -->
-                        <li class="nav-item dropdown">
-                            <a
-                                    class="nav-link dropdown-toggle d-flex align-items-center"
-                                    href="#"
-                                    id="navbarDropdownMenuLink"
-                                    role="button"
-                                    data-mdb-toggle="dropdown"
-                                    aria-expanded="false"
-                            >
-                                <img
-                                        src="https://ui-avatars.com/api/?background=random&name={{ user.username }}&length=1"
-                                        class="rounded-circle"
-                                        height="25"
-                                        alt="profile"
-                                        loading="lazy"
-                                />
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a class="dropdown-item" href="/profile">My profile</a></li>
-                                <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
             </div>
+            <footer class="p-2">
+                <small><a href="https://icons8.com/icon/64002/toolbox"
+                          target="_blank">Toolbox icon by
+                    Icons8</a></small>
+            </footer>
         </div>
     </nav>
 {% endif %}
-<div class="container p-5">
+<div class="container main p-5">
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == 'error' %}
@@ -141,11 +168,33 @@
     {% endif %}
     {% block content %}{% endblock %}
 </div>
-
 <!-- MDB -->
 <script
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.js"
 ></script>
+
+<!-- seed data -->
+<script>
+    const seedData = () => {
+        console.log('seeding')
+        fetch(`/seed`)
+            .then(response => response.text())
+            .then(_ => {
+                iziToast.success({
+                    title: 'Success',
+                    message: 'Data seeded.',
+                    maxWidth: 310
+                })
+            })
+            .catch((error) => {
+                iziToast.error({
+                    title: 'Error',
+                    message: error,
+                    maxWidth: 310
+                })
+            });
+    }
+</script>
 </body>
 </html>
