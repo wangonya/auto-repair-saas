@@ -40,7 +40,7 @@ class ContactsView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse('contacts'))
 
 
-class UpdateContactView(SuccessMessageMixin, UpdateView):
+class UpdateContactView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Contact
     form = NewContactForm()
     fields = [*form.fields]
@@ -48,7 +48,7 @@ class UpdateContactView(SuccessMessageMixin, UpdateView):
     success_message = 'Contact updated.'
 
 
-class DeleteContactView(SuccessMessageMixin, DeleteView):
+class DeleteContactView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Contact
     success_url = reverse_lazy('contacts')
     success_message = 'Contact deleted.'

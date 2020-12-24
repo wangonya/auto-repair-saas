@@ -38,7 +38,7 @@ class JobsView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse('jobs'))
 
 
-class UpdateJobView(SuccessMessageMixin, UpdateView):
+class UpdateJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Job
     form = NewJobForm()
     fields = [*form.fields]
@@ -46,7 +46,7 @@ class UpdateJobView(SuccessMessageMixin, UpdateView):
     success_message = 'Job updated.'
 
 
-class DeleteJobView(SuccessMessageMixin, DeleteView):
+class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Job
     success_url = reverse_lazy('jobs')
     success_message = 'Job deleted.'

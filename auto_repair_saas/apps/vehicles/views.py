@@ -40,7 +40,7 @@ class VehiclesView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse('vehicles'))
 
 
-class UpdateVehicleView(SuccessMessageMixin, UpdateView):
+class UpdateVehicleView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Vehicle
     form = NewVehicleForm()
     fields = [*form.fields]
@@ -48,7 +48,7 @@ class UpdateVehicleView(SuccessMessageMixin, UpdateView):
     success_message = 'Vehicle updated.'
 
 
-class DeleteVehicleView(SuccessMessageMixin, DeleteView):
+class DeleteVehicleView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Vehicle
     success_url = reverse_lazy('vehicles')
     success_message = 'Vehicle deleted.'
