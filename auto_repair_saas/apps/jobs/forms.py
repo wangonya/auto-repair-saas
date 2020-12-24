@@ -10,9 +10,8 @@ class NewJobForm(forms.Form):
         if 'client' in self.data:
             try:
                 owner_id = int(self.data.get('client'))
-                self.fields['vehicle'].queryset = Vehicle.objects.filter(
-                    owner_id=owner_id
-                )
+                self.fields['vehicle'].queryset = Contact.objects.get(
+                    owner_id).vehicle_set.all()
             except (ValueError, TypeError):
                 pass  # invalid input; fallback to empty Vehicle queryset
 
