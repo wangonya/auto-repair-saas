@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="row p-5 mt-5">
+    <div class="row p-5">
         <div class="col-md-4 offset-md-4">
-            <h1 style="text-align: center">ARS Manager</h1>
+            <img alt="logo"
+                 loading="lazy"
+                 class="center"
+                 src="https://img.icons8.com/clouds/200/000000/toolbox.png"/>
             <br>
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
@@ -24,6 +27,10 @@
             </form>
             <br>
             <p style="text-align: center">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+            <br><br>
+            <p style="text-align: center"><small><a href="https://icons8.com/icon/64002/toolbox"
+                                                    target="_blank">Toolbox icon by Icons8</a></small>
+            </p>
         </div>
     </div>
 {% endblock %}

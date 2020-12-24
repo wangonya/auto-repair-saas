@@ -1,4 +1,171 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>dashboard</h1>
+    <div class="row mb-4">
+        <div class="col">
+            <h4>Dashboard</h4>
+        </div>
+        <div class="col">
+            <div class="btn-group shadow-0  float-end" role="group">
+                <button type="button" class="btn btn-primary active" id="data-week">Week</button>
+                <button type="button" class="btn btn-primary" id="data-month">Month</button>
+                <button type="button" class="btn btn-primary" id="data-year">Year</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title text-muted text-uppercase">sales</p>
+                    <div class="row">
+                        <span class="card-text fs-3">
+                                KSh. 67,923
+                            </span>
+                        <small class="text-success">
+                            <i class="fas fa-angle-up"></i> 32%
+                        </small>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <canvas id="sales-chart" height="80"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title text-muted text-uppercase">Top earners</p>
+                    {% for staff in '123' %}
+                        <div class="row d-flex align-items-center mb-2">
+                            <div class="col-4">
+                                <img
+                                        src="https://ui-avatars.com/api/?background=random&name=d&length=1"
+                                        class="rounded-circle me-2"
+                                        height="25"
+                                        alt="profile"
+                                        loading="lazy"
+                                />
+                                Staff member {{ staff }}
+                            </div>
+                            <div class="col-6">
+                                <div class="progress">
+                                    <div
+                                            class="progress-bar bg-success"
+                                            role="progressbar"
+                                            style="width: 25%"
+                                            aria-valuenow="60"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="col-2"><small>{{ 60|add:staff }}</small></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title text-muted text-uppercase">clients</p>
+                    <div class="row d-flex align-items-center">
+                        <div class="col">
+                            <p class="card-text">
+                                <span class="fs-1">19</span>
+                                <small class="text-success">
+                                    <i class="fas fa-angle-up"></i> 1%
+                                </small>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="card-text float-end fs-4 text-muted">
+                                <i class="fas fa-users"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title text-muted text-uppercase">suppliers</p>
+                    <div class="row d-flex align-items-center">
+                        <div class="col">
+                            <p class="card-text">
+                                <span class="fs-1">7</span>
+                                <small class="text-info">
+                                    <i class="fas fa-minus"></i> 0%
+                                </small>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="card-text float-end fs-4 text-muted">
+                                <i class="fas fa-truck"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        chartOptions = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+
+        // sales chart
+        const salesCard = document.getElementById('sales-chart')
+        const salesChart = new Chart(salesCard, {
+            type: 'bar',
+            data: {
+                datasets: [
+                    {
+                        label: 'Sales revenue',
+                        data: [10, 20, 30, 40, 20, 30, 40],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                    },
+                    {
+                        label: 'Cash',
+                        data: [6, 15, 19, 20, 19, 15, 19],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        type: 'line',
+                        fill: false,
+                    },
+                    {
+                        label: 'Bank',
+                        data: [3, 5, 9, 4, 12, 10, 15],
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        type: 'line',
+                        fill: false,
+                    },
+                    {
+                        label: 'M-Pesa',
+                        data: [8, 15, 29, 24, 11, 22, 29],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        type: 'line',
+                        fill: false,
+                    },
+                ],
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            },
+            options: chartOptions
+        })
+    </script>
 {% endblock %}
