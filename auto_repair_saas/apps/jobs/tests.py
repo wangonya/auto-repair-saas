@@ -1,23 +1,13 @@
-import factory
 from django.contrib.messages import get_messages
 from django.urls import reverse
 from faker import Faker
 
 from auto_repair_saas.apps.contacts.tests import ContactFactory
-from auto_repair_saas.apps.jobs.models import Job
+from auto_repair_saas.apps.utils.factories import JobFactory
 from auto_repair_saas.apps.utils.tests import BaseTestCase
 from auto_repair_saas.apps.vehicles.tests import VehicleFactory
 
 fake = Faker()
-
-
-class JobFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Job
-
-    client = factory.SubFactory(ContactFactory)
-    vehicle = factory.SubFactory(VehicleFactory)
-    charged = fake.random_int()
 
 
 class JobsTestCase(BaseTestCase):

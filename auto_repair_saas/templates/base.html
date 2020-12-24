@@ -130,7 +130,11 @@
                    role="button"
                 ><i class="fas fa-sign-out-alt me-3"></i>logout
                 </a>
-                <button class="btn btn-info mt-5">Seed data</button>
+                <button class="btn btn-info mt-5" onclick="seedData()"
+                        data-mdb-toggle="tooltip"
+                        data-mdb-placement="top"
+                        title="Generate demo data">Seed data
+                </button>
             </div>
             <footer class="p-2">
                 <small><a href="https://icons8.com/icon/64002/toolbox"
@@ -169,5 +173,28 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.js"
 ></script>
+
+<!-- seed data -->
+<script>
+    const seedData = () => {
+        console.log('seeding')
+        fetch(`/seed`)
+            .then(response => response.text())
+            .then(_ => {
+                iziToast.success({
+                    title: 'Success',
+                    message: 'Data seeded.',
+                    maxWidth: 310
+                })
+            })
+            .catch((error) => {
+                iziToast.error({
+                    title: 'Error',
+                    message: error,
+                    maxWidth: 310
+                })
+            });
+    }
+</script>
 </body>
 </html>

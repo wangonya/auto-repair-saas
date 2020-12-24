@@ -1,28 +1,19 @@
-import factory
 from django.contrib.messages import get_messages
 from django.urls import reverse
 from faker import Faker
 
 from auto_repair_saas.apps.contacts.tests import ContactFactory
+from auto_repair_saas.apps.utils.factories import VehicleFactory
 from auto_repair_saas.apps.utils.tests import BaseTestCase
-from auto_repair_saas.apps.vehicles.models import Vehicle
 
 fake = Faker()
-
-
-class VehicleFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Vehicle
-
-    number_plate = fake.license_plate()
-    owner = factory.SubFactory(ContactFactory)
 
 
 class VehicleTestCase(BaseTestCase):
     def test_get_vehicles_page(self):
         response = self.client.get(reverse('vehicles'))
         self.assertEqual(response.status_code, 200)
-    
+
     def test_post_new_vehicle(self):
         client = ContactFactory()
         data = {

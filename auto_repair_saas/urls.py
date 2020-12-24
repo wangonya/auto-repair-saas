@@ -16,11 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from auto_repair_saas.apps.tenants.views import seed_data
+
 urlpatterns = [
     path('', include('auto_repair_saas.apps.dashboard.urls')),
     path('jobs/', include('auto_repair_saas.apps.jobs.urls')),
     path('vehicles/', include('auto_repair_saas.apps.vehicles.urls')),
     path('contacts/', include('auto_repair_saas.apps.contacts.urls')),
     path('auth/', include('auto_repair_saas.apps.authentication.urls')),
+    path('seed/', seed_data, name='seed-data'),
     path('admin/', admin.site.urls),
 ]

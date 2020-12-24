@@ -1,22 +1,10 @@
-import factory
 from django.contrib.messages import get_messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase
 from django.urls import reverse
-from faker import Faker
 
 from .models import User
-
-fake = Faker()
-
-
-class UserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = User
-
-    username = fake.name()
-    email = fake.email()
-    password = fake.password()
+from ..utils.factories import UserFactory
 
 
 class AuthTestCase(TestCase):

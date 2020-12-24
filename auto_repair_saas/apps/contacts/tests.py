@@ -1,20 +1,11 @@
-import factory
 from django.contrib.messages import get_messages
 from django.urls import reverse
 from faker import Faker
 
-from auto_repair_saas.apps.contacts.models import Contact
+from auto_repair_saas.apps.utils.factories import ContactFactory
 from auto_repair_saas.apps.utils.tests import BaseTestCase
 
 fake = Faker()
-
-
-class ContactFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Contact
-
-    contact_type = 'client'
-    name = fake.name()
 
 
 class ContactsTestCase(BaseTestCase):
