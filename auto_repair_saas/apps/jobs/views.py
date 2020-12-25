@@ -17,9 +17,18 @@ class JobsView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         jobs = Job.objects.all()
+        estimates = jobs.exclude(status__in=('in_progress', 'done'))
+        in_progress = jobs.filter(status='in_progress')
+        done = jobs.filter(status='done')
         form = self.form_class()
+        context = {
+            'estimates': estimates,
+            'in_progress': in_progress,
+            'done': done,
+            'form': form
+        }
         return render(
-            request, self.template_name, {'jobs': jobs, 'form': form}
+            request, self.template_name, context
         )
 
     def post(self, request, *args, **kwargs):
