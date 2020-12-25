@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h4>Staff</h4>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    data-mdb-toggle="modal"
+                    data-mdb-target="#staffFormModal">New Staff member
+            </button>
+        </div>
+    </div>
+
+    {#  staff cards  #}
+    <div class="row mt-5">
+        {% for member in staff %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <img class="rounded-circle"
+                                 height="35"
+                                 loading="lazy" alt="{{ member.name }}"
+                                 src="https://avatars.dicebear.com/4.5/api/avataaars/{{ member.name }}.svg?style=circle">
+                            <span class="fs-5 ps-2">{{ member.name }}</span>
+                            <div class="float-end">
+                                <div class="dropdown pt-1">
+                                    <a href="#" role="button"
+                                       data-mdb-toggle="dropdown"
+                                       aria-expanded="false"
+                                    ><i class="fas fa-ellipsis-h"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"
+                                               data-mdb-toggle="modal"
+                                               data-mdb-target="#staffFormModal"
+                                               data-mdb-mode="edit"
+                                               data-mdb-staff-id="{{ member.id }}"
+                                               data-mdb-staff-staff_type="{{ member.staff_type }}"
+                                               data-mdb-staff-phone="{{ member.phone }}"
+                                               data-mdb-staff-email="{{ member.email }}"
+                                               data-mdb-staff-name="{{ member.name }}">Edit</a></li>
+                                        <li><a class="dropdown-item text-danger" href="#"
+                                               data-mdb-toggle="modal"
+                                               data-mdb-target="#confirmDeleteStaffModal"
+                                               data-mdb-staff-id="{{ member.id }}">Delete</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="p-5 mt-5" style="text-align: center; color: #dce0e6">
+                <i class="fas fa-inbox fa-5x"></i>
+                <h6>No Data</h6>
+            </div>
+        {% endfor %}
+    </div>
+
+    {#  staff form modal  #}
+    <div
+            class="modal fade"
+            id="staffFormModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staff-form-modal-title"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staff-form-modal-title">Create staff member</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'staff' %}" method="post"
+                          id="staff-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="id_name">Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="id_email">Email</label>
+                                <div class="form-outline">
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                                <button type="submit" class="btn btn-primary" id="submit-staff-form">Create</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# delete confirmation modal #}
+    <div
+            class="modal fade"
+            id="confirmDeleteStaffModal"
+            data-mdb-backdrop="static"
+            data-mdb-keyboard="false"
+            tabindex="-1"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="confirm-delete-staff-form" method="post">
+                        {% csrf_token %}
+                        <p class="p-3">Are you sure you want to delete this staff member? This action can not be
+                            undone.</p>
+                        <div class="float-end">
+                            <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <span class="ps-1">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const staffFormModal = document.getElementById('staffFormModal')
+        staffFormModal.addEventListener('show.mdb.modal', event => {
+            const button = event.relatedTarget
+            const modalMode = button.getAttribute('data-mdb-mode')
+            if (modalMode === 'edit') {
+                const staffId = button.getAttribute('data-mdb-staff-id')
+                const staffName = button.getAttribute('data-mdb-staff-name')
+                const staffEmail = button.getAttribute('data-mdb-staff-email')
+
+                const modalTitle = staffFormModal.querySelector('#staff-form-modal-title')
+                const modalStaffName = staffFormModal.querySelector('#id_name')
+                const modalStaffEmail = staffFormModal.querySelector('#id_email')
+
+                modalTitle.textContent = `Edit staff member`
+                modalStaffName.value = staffName
+                modalStaffEmail.value = staffEmail !== 'None' ? staffEmail : null
+
+                const form = document.getElementById("staff-form")
+                form.action = `/staff/update/${staffId}/`
+                const submitButton = document.getElementById("submit-staff-form")
+                submitButton.textContent = 'Save'
+            }
+        })
+
+        const confirmDeleteStaffModal = document.getElementById('confirmDeleteStaffModal')
+        confirmDeleteStaffModal.addEventListener('show.mdb.modal', event => {
+            const form = document.getElementById("confirm-delete-staff-form")
+            const button = event.relatedTarget
+            const staffId = button.getAttribute('data-mdb-staff-id')
+            form.action = `/staff/delete/${staffId}/`
+        })
+    </script>
+{% endblock %}

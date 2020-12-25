@@ -60,67 +60,76 @@
                 role="tabpanel"
                 aria-labelledby="tab-1"
         >
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Job #</th>
-                            <th>Created On</th>
-                            <th>Due Start Date</th>
-                            <th>Due End Date</th>
-                            <th>Client</th>
-                            <th>Vehicle</th>
-                            <th>Charged</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for job in jobs %}
+            {% if jobs %}
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
-                                <td>{{ job.id }}</td>
-                                <td>{{ job.created_on }}</td>
-                                <td>{{ job.due_start_date|default_if_none:"-" }}</td>
-                                <td>{{ job.due_end_date|default_if_none:"-" }}</td>
-                                <td>{{ job.client }}</td>
-                                <td>{{ job.vehicle }}</td>
-                                <td>{{ job.charged }}</td>
-                                <td>
-                                    <a href="#" role="button" title="View"
-                                       data-mdb-toggle="modal"
-                                       data-mdb-target="#viewJobModal"
-                                       data-mdb-job-id="{{ job.id }}"
-                                       data-mdb-job-created_on="{{ job.created_on }}"
-                                       data-mdb-job-due_start_date="{{ job.due_start_date }}"
-                                       data-mdb-job-due_end_date="{{ job.due_end_date }}"
-                                       data-mdb-job-client="{{ job.client }}"
-                                       data-mdb-job-vehicle="{{ job.vehicle }}"
-                                       data-mdb-job-charged="{{ job.charged }}"
-                                       data-mdb-job-description="{{ job.description }}"
-                                    ><i class="fas fa-external-link-alt p-2"></i></a>
-                                    <a href="#" role="button" title="Edit"
-                                       data-mdb-toggle="modal"
-                                       data-mdb-target="#editJobModal"
-                                       data-mdb-job-id="{{ job.id }}"
-                                       data-mdb-job-due_start_date="{{ job.due_start_date }}"
-                                       data-mdb-job-due_end_date="{{ job.due_end_date }}"
-                                       data-mdb-job-client="{{ job.client.id }}"
-                                       data-mdb-job-vehicle="{{ job.vehicle.id }}"
-                                       data-mdb-job-charged="{{ job.charged }}"
-                                       data-mdb-job-description="{{ job.description }}"
-                                    ><i class="fas fa-edit p-2"></i></a>
-                                    <a href="#" role="button" title="Delete"
-                                       data-mdb-toggle="modal"
-                                       data-mdb-target="#confirmDeleteJobModal"
-                                       data-mdb-job-id="{{ job.id }}"
-                                    ><i class="fas fa-trash-alt text-danger p-2"></i></a>
-                                </td>
+                                <th>Job #</th>
+                                <th>Created On</th>
+                                <th>Due Start Date</th>
+                                <th>Due End Date</th>
+                                <th>Client</th>
+                                <th>Vehicle</th>
+                                <th>Charged</th>
+                                <th>Action</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for job in jobs %}
+                                <tr>
+                                    <td>{{ job.id }}</td>
+                                    <td>{{ job.created_on }}</td>
+                                    <td>{{ job.due_start_date|default_if_none:"-" }}</td>
+                                    <td>{{ job.due_end_date|default_if_none:"-" }}</td>
+                                    <td>{{ job.client }}</td>
+                                    <td>{{ job.vehicle }}</td>
+                                    <td>{{ job.charged }}</td>
+                                    <td>
+                                        <a href="#" role="button" title="View"
+                                           data-mdb-toggle="modal"
+                                           data-mdb-target="#viewJobModal"
+                                           data-mdb-job-id="{{ job.id }}"
+                                           data-mdb-job-created_on="{{ job.created_on }}"
+                                           data-mdb-job-due_start_date="{{ job.due_start_date }}"
+                                           data-mdb-job-due_end_date="{{ job.due_end_date }}"
+                                           data-mdb-job-client="{{ job.client }}"
+                                           data-mdb-job-vehicle="{{ job.vehicle }}"
+                                           data-mdb-job-charged="{{ job.charged }}"
+                                           data-mdb-job-assigned="{{ job.assigned }}"
+                                           data-mdb-job-description="{{ job.description }}"
+                                        ><i class="fas fa-external-link-alt p-2"></i></a>
+                                        <a href="#" role="button" title="Edit"
+                                           data-mdb-toggle="modal"
+                                           data-mdb-target="#editJobModal"
+                                           data-mdb-job-id="{{ job.id }}"
+                                           data-mdb-job-due_start_date="{{ job.due_start_date }}"
+                                           data-mdb-job-due_end_date="{{ job.due_end_date }}"
+                                           data-mdb-job-client="{{ job.client.id }}"
+                                           data-mdb-job-vehicle="{{ job.vehicle.id }}"
+                                           data-mdb-job-charged="{{ job.charged }}"
+                                           data-mdb-job-assigned="{{ job.assigned.id }}"
+                                           data-mdb-job-description="{{ job.description }}"
+                                        ><i class="fas fa-edit p-2"></i></a>
+                                        <a href="#" role="button" title="Delete"
+                                           data-mdb-toggle="modal"
+                                           data-mdb-target="#confirmDeleteJobModal"
+                                           data-mdb-job-id="{{ job.id }}"
+                                        ><i class="fas fa-trash-alt text-danger p-2"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="p-5 mt-5" style="text-align: center; color: #dce0e6">
+                    <i class="fas fa-inbox fa-5x"></i>
+                    <h6>No Data</h6>
+                </div>
+            {% endif %}
         </div>
         <div class="tab-pane fade" id="in-progress-tab" role="tabpanel" aria-labelledby="tab-2">
             Tab 2 content

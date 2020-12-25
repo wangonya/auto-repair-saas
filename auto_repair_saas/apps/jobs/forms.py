@@ -1,6 +1,7 @@
 from django import forms
 
 from auto_repair_saas.apps.contacts.models import Contact
+from auto_repair_saas.apps.staff.models import Staff
 from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
@@ -10,13 +11,10 @@ class NewJobForm(forms.Form):
         if 'client' in self.data:
             try:
                 owner_id = int(self.data.get('client'))
-                self.fields['vehicle'].queryset = Vehicle.objects.filter(
-                    owner_id=owner_id
-                )
+                self.fields['vehicle'].queryset = Contact.objects.get(
+                    owner_id).vehicle_set.all()
             except (ValueError, TypeError):
                 pass  # invalid input; fallback to empty Vehicle queryset
-
-    MECHANIC_CHOICES = [('', 'Select a mechanic'), ]
 
     select_attrs = {'class': 'form-control'}
     input_attrs = {'class': 'form-control'}
@@ -43,9 +41,9 @@ class NewJobForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea(
         attrs={**input_attrs, **{'rows': 3}}), required=False
     )
-    assigned = forms.CharField(
-        widget=forms.Select(attrs=select_attrs, choices=MECHANIC_CHOICES, ),
-        required=False
+    assigned = forms.ModelChoiceField(
+        queryset=Staff.objects.all(),
+        widget=forms.Select(attrs=select_attrs), required=False
     )
     charged = forms.CharField(widget=forms.NumberInput(
         attrs={**input_attrs, **{'value': 0}}), required=False

@@ -24,6 +24,7 @@ urlpatterns = [
     path('vehicles/', include('auto_repair_saas.apps.vehicles.urls')),
     path('contacts/', include('auto_repair_saas.apps.contacts.urls')),
     path('auth/', include('auto_repair_saas.apps.authentication.urls')),
+    path('staff/', include('auto_repair_saas.apps.staff.urls')),
     path('seed/', seed_data, name='seed-data'),
     path('admin/', admin.site.urls),
 ]

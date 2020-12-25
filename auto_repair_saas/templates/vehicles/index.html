@@ -12,43 +12,50 @@
         </div>
     </div>
 
-    {#  vehicles table  #}
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Number Plate</th>
-                    <th>Owner</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for vehicle in vehicles %}
+    {% if vehicles %}
+        {#  vehicles table  #}
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
                     <tr>
-                        <td>{{ vehicle }}</td>
-                        <td>{{ vehicle.owner }}</td>
-                        <td>
-                            <a href="#" role="button" title="Edit"
-                               data-mdb-toggle="modal"
-                               data-mdb-target="#vehicleFormModal"
-                               data-mdb-mode="edit"
-                               data-mdb-vehicle-id="{{ vehicle.id }}"
-                               data-mdb-vehicle-number_plate="{{ vehicle }}"
-                               data-mdb-vehicle-owner="{{ vehicle.owner.id }}"
-                            ><i class="fas fa-edit p-2"></i></a>
-                            <a href="#" role="button" title="Delete"
-                               data-mdb-toggle="modal"
-                               data-mdb-target="#confirmDeleteVehicleModal"
-                               data-mdb-vehicle-id="{{ vehicle.id }}"
-                            ><i class="fas fa-trash-alt text-danger p-2"></i></a>
-                        </td>
+                        <th>Number Plate</th>
+                        <th>Owner</th>
+                        <th>Action</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for vehicle in vehicles %}
+                        <tr>
+                            <td>{{ vehicle }}</td>
+                            <td>{{ vehicle.owner }}</td>
+                            <td>
+                                <a href="#" role="button" title="Edit"
+                                   data-mdb-toggle="modal"
+                                   data-mdb-target="#vehicleFormModal"
+                                   data-mdb-mode="edit"
+                                   data-mdb-vehicle-id="{{ vehicle.id }}"
+                                   data-mdb-vehicle-number_plate="{{ vehicle }}"
+                                   data-mdb-vehicle-owner="{{ vehicle.owner.id }}"
+                                ><i class="fas fa-edit p-2"></i></a>
+                                <a href="#" role="button" title="Delete"
+                                   data-mdb-toggle="modal"
+                                   data-mdb-target="#confirmDeleteVehicleModal"
+                                   data-mdb-vehicle-id="{{ vehicle.id }}"
+                                ><i class="fas fa-trash-alt text-danger p-2"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="p-5 mt-5" style="text-align: center; color: #dce0e6">
+            <i class="fas fa-inbox fa-5x"></i>
+            <h6>No Data</h6>
+        </div>
+    {% endif %}
 
     {#  vehicle modal  #}
     <div

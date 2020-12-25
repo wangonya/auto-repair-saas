@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -12,16 +11,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Contact',
+            name='Staff',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True,
                                         serialize=False, verbose_name='ID')),
-                ('contact_type', models.CharField(
-                    choices=[('client', 'Client'), ('supplier', 'Supplier')],
-                    max_length=8)),
                 ('name', models.CharField(max_length=50)),
-                ('phone',
-                 models.CharField(blank=True, max_length=20, null=True)),
                 ('email',
                  models.EmailField(blank=True, max_length=254, null=True)),
                 ('created_on', models.DateTimeField(auto_now_add=True)),

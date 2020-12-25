@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse
 
 from ..utils.factories import ContactFactory, JobFactory
@@ -11,4 +11,4 @@ def seed_data(request, *args, **kwargs):
         JobFactory()
     for _ in range(0, 5):
         ContactFactory(contact_type='supplier')
-    return HttpResponseRedirect(reverse('dashboard'))
+    return redirect(reverse('dashboard'))
