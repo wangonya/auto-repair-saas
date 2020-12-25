@@ -9,10 +9,13 @@ class Job(models.Model):
     class Meta:
         ordering = ('-created_on',)
 
-    job_status_choices = (('pending', 'Pending'),
-                          ('confirmed', 'Confirmed'),
+    job_status_choices = (('pending', 'Pending (Estimate)'),
+                          ('confirmed', 'Confirmed (Estimate)'),
                           ('in_progress', 'In progress'),
                           ('done', 'Done'))
+    payment_method_choices = (('cash', 'Cash'),
+                              ('card', 'Card'),
+                              ('mpesa', 'M-Pesa'))
     client = models.ForeignKey(Contact, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
@@ -24,4 +27,8 @@ class Job(models.Model):
     status = models.CharField(
         choices=job_status_choices, max_length=15, null=False, blank=False,
         default='pending',
+    )
+    payment_method = models.CharField(
+        choices=payment_method_choices, max_length=6, null=False, blank=False,
+        default='cash',
     )

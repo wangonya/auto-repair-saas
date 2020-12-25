@@ -62,3 +62,6 @@ class JobFactory(factory.django.DjangoModelFactory):
     status = factory.LazyAttribute(lambda _: fake.random_element(
         elements=('pending', 'confirmed', 'in_progress', 'done',)
     ))
+    payment_method = factory.LazyAttribute(lambda _: fake.random_element(
+        elements=('cash', 'card', 'mpesa',)
+    ))
