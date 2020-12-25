@@ -21,7 +21,9 @@ class JobsTestCase(BaseTestCase):
         data = {
             'client': client.id,
             'vehicle': vehicle.id,
-            'charged': fake.random_int()
+            'charged': fake.random_int(),
+            'payment_method': 'cash',
+            'status': 'pending'
         }
         response = self.client.post(reverse('jobs'), data)
         messages = [m.message for m in get_messages(response.wsgi_request)]
@@ -40,7 +42,9 @@ class JobsTestCase(BaseTestCase):
             'client': job.client_id,
             'vehicle': job.vehicle_id,
             'charged': job.charged + 1,
-            'assigned': job.assigned_id
+            'assigned': job.assigned_id,
+            'payment_method': 'cash',
+            'status': 'pending'
         }
         response = self.client.post(
             reverse('update-job', kwargs={'pk': job.id}), data

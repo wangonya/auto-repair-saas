@@ -23,6 +23,13 @@ class NewJobForm(forms.Form):
         'type': 'date',
         'placeholder': 'Select date'
     }
+    job_status_choices = (('pending', 'Pending (Estimate)'),
+                          ('confirmed', 'Confirmed (Estimate)'),
+                          ('in_progress', 'In progress'),
+                          ('done', 'Done'))
+    payment_method_choices = (('cash', 'Cash'),
+                              ('card', 'Card'),
+                              ('mpesa', 'M-Pesa'))
 
     client = forms.ModelChoiceField(
         queryset=Contact.objects.filter(contact_type='client'),
@@ -47,4 +54,12 @@ class NewJobForm(forms.Form):
     )
     charged = forms.CharField(widget=forms.NumberInput(
         attrs={**input_attrs, **{'value': 0}}), required=False
+    )
+    status = forms.ChoiceField(
+        choices=job_status_choices,
+        widget=forms.Select(attrs=select_attrs)
+    )
+    payment_method = forms.ChoiceField(
+        choices=payment_method_choices,
+        widget=forms.Select(attrs=select_attrs)
     )
