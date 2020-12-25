@@ -37,9 +37,10 @@ class JobsTestCase(BaseTestCase):
     def test_update_job(self):
         job = JobFactory()
         data = {
-            'client': job.client.id,
-            'vehicle': job.vehicle.id,
-            'charged': job.charged + 1
+            'client': job.client_id,
+            'vehicle': job.vehicle_id,
+            'charged': job.charged + 1,
+            'assigned': job.assigned_id
         }
         response = self.client.post(
             reverse('update-job', kwargs={'pk': job.id}), data

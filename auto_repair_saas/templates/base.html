@@ -118,7 +118,7 @@
                    role="button"
                 ><i class="fas fa-car me-3"></i>Vehicles
                 </a>
-                <a href="/" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
+                <a href="{% url 'staff' %}" class="btn btn-light shadow-0 text-muted btn-lg nav-menu-button"
                    role="button"
                 ><i class="fas fa-user-friends me-3"></i>Staff
                 </a>
@@ -177,15 +177,17 @@
 <!-- seed data -->
 <script>
     const seedData = () => {
-        console.log('seeding')
         fetch(`/seed`)
-            .then(response => response.text())
+            .then(response => {
+                if (response.status === 200) {
+                    iziToast.success({
+                        title: 'Success',
+                        message: 'Data seeded.',
+                        maxWidth: 310
+                    })
+                }
+            })
             .then(_ => {
-                iziToast.success({
-                    title: 'Success',
-                    message: 'Data seeded.',
-                    maxWidth: 310
-                })
             })
             .catch((error) => {
                 iziToast.error({

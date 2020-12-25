@@ -47,6 +47,7 @@ TENANT_APPS = (
     'auto_repair_saas.apps.jobs',
     'auto_repair_saas.apps.contacts',
     'auto_repair_saas.apps.vehicles',
+    'auto_repair_saas.apps.staff',
 )
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
