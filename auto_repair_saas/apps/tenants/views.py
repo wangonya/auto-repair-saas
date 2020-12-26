@@ -11,10 +11,8 @@ from ..vehicles.models import Vehicle
 @login_required
 def seed_data(request, *args, **kwargs):
     # clean tables
-    Job.objects.all().delete()
-    Staff.objects.all().delete()
-    Vehicle.objects.all().delete()
-    Contact.objects.all().delete()
+    for model in (Job, Staff, Vehicle, Contact,):
+        model.objects.all().delete()
 
     for _ in range(0, 15):
         JobFactory()
