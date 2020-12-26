@@ -65,3 +65,9 @@ class JobFactory(factory.django.DjangoModelFactory):
     payment_method = factory.LazyAttribute(lambda _: fake.random_element(
         elements=('cash', 'card', 'mpesa',)
     ))
+    paid = factory.LazyAttribute(lambda _: fake.random_element(
+        elements=(True, False)
+    ))
+    payment_registered_on = factory.LazyAttribute(
+        lambda _: fake.date_between(start_date='-2w', end_date='+4w')
+    )

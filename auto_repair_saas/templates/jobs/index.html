@@ -86,9 +86,9 @@
                                     <td>{{ job.vehicle }}</td>
                                     <td>{{ job.charged }}</td>
                                     {% if job.status == 'pending' %}
-                                        <td><span class="badge bg-warning text-dark">{{ job.status }}</span></td>
+                                        <td><span class="badge bg-warning">{{ job.status }}</span></td>
                                     {% else %}
-                                        <td><span class="badge bg-success text-light">{{ job.status }}</span></td>
+                                        <td><span class="badge bg-success">{{ job.status }}</span></td>
                                     {% endif %}
                                     <td>
                                         <a href="#" role="button" title="View"
@@ -153,6 +153,7 @@
                                 <th>Client</th>
                                 <th>Vehicle</th>
                                 <th>Charged</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -165,6 +166,11 @@
                                     <td>{{ job.client }}</td>
                                     <td>{{ job.vehicle }}</td>
                                     <td>{{ job.charged }}</td>
+                                    {% if job.paid %}
+                                        <td><span class="badge bg-success">paid</span></td>
+                                    {% else %}
+                                        <td><span class="badge bg-danger">not paid</span></td>
+                                    {% endif %}
                                     <td>
                                         <a href="#" role="button" title="View"
                                            data-mdb-toggle="modal"
@@ -228,6 +234,7 @@
                                 <th>Client</th>
                                 <th>Vehicle</th>
                                 <th>Charged</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -240,6 +247,11 @@
                                     <td>{{ job.client }}</td>
                                     <td>{{ job.vehicle }}</td>
                                     <td>{{ job.charged }}</td>
+                                    {% if job.paid %}
+                                        <td><span class="badge bg-success">paid</span></td>
+                                    {% else %}
+                                        <td><span class="badge bg-danger">not paid</span></td>
+                                    {% endif %}
                                     <td>
                                         <a href="#" role="button" title="View"
                                            data-mdb-toggle="modal"

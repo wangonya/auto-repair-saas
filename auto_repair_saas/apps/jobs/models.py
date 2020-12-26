@@ -32,3 +32,5 @@ class Job(models.Model):
         choices=payment_method_choices, max_length=6, null=False, blank=False,
         default='cash',
     )
+    paid = models.BooleanField(default=False)
+    payment_registered_on = models.DateField(null=True, blank=True)

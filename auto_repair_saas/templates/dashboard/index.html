@@ -18,11 +18,10 @@
                 <div class="card-body">
                     <p class="card-title text-muted text-uppercase">sales</p>
                     <div class="row">
-                        <span class="card-text fs-3">
-                                KSh. 67,923
-                            </span>
+                        <span class="card-text fs-3" id="total-sales"></span>
                         <small class="text-success">
-                            <i class="fas fa-angle-up"></i> 32%
+                            <i id="total-sales-growth-icon"></i>
+                            <span id="total-sales-growth"></span>
                         </small>
                     </div>
                     <div class="row">
@@ -39,133 +38,153 @@
             <div class="card">
                 <div class="card-body">
                     <p class="card-title text-muted text-uppercase">Top earners</p>
-                    {% for staff in '123' %}
-                        <div class="row d-flex align-items-center mb-2">
-                            <div class="col-4">
-                                <img
-                                        src="https://avatars.dicebear.com/4.5/api/avataaars/{{ staff }}.svg?style=circle"
-                                        class="rounded-circle me-2"
-                                        height="25"
-                                        alt="profile"
-                                        loading="lazy"
-                                />
-                                Staff member {{ staff }}
-                            </div>
-                            <div class="col-6">
-                                <div class="progress">
-                                    <div
-                                            class="progress-bar bg-success"
-                                            role="progressbar"
-                                            style="width: 25%"
-                                            aria-valuenow="60"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"
-                                    ></div>
-                                </div>
-                            </div>
-                            <div class="col-2"><small>{{ 60|add:staff }}</small></div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-title text-muted text-uppercase">clients</p>
-                    <div class="row d-flex align-items-center">
-                        <div class="col">
-                            <p class="card-text">
-                                <span class="fs-1">19</span>
-                                <small class="text-success">
-                                    <i class="fas fa-angle-up"></i> 1%
-                                </small>
-                            </p>
-                        </div>
-                        <div class="col">
-                            <p class="card-text float-end fs-4 text-muted">
-                                <i class="fas fa-users"></i>
-                            </p>
+                    <div class="row">
+                        <div class="col-12">
+                            <canvas id="top-earners-chart" height="80"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-3">
+        <div class="col-6">
             <div class="card">
                 <div class="card-body">
-                    <p class="card-title text-muted text-uppercase">suppliers</p>
-                    <div class="row d-flex align-items-center">
-                        <div class="col">
-                            <p class="card-text">
-                                <span class="fs-1">7</span>
-                                <small class="text-info">
-                                    <i class="fas fa-minus"></i> 0%
-                                </small>
-                            </p>
-                        </div>
-                        <div class="col">
-                            <p class="card-text float-end fs-4 text-muted">
-                                <i class="fas fa-truck"></i>
-                            </p>
-                        </div>
-                    </div>
+                    <p class="card-title text-muted text-uppercase">jobs overview</p>
+                    <table class="table table-sm">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Pending Estimates</th>
+                            <td id="pending-estimates-count"></td>
+                            <td id="pending-estimates-charged"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Confirmed Estimates</th>
+                            <td id="confirmed-estimates-count"></td>
+                            <td id="confirmed-estimates-charged"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">In Progress</th>
+                            <td id="in-progress-jobs-count"></td>
+                            <td id="in-progress-jobs-charged"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Done</th>
+                            <td id="done-jobs-count"></td>
+                            <td id="done-jobs-charged"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        chartOptions = {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
+        const fetchDashboardData = (period = 'week') => {
+            fetch(`/dashboard/data?period=${period}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-sales').textContent = `KSh. ${data.sales.toLocaleString()}`
+                    populateSalesChart(data)
+                    populateTopEarnersChart(data.top_earners)
+                    document.getElementById('pending-estimates-count').textContent = `${data.pending_estimates_count} Orders`
+                    document.getElementById('pending-estimates-charged').textContent = `KSh. ${data.pending_estimates_charged}`
+                    document.getElementById('confirmed-estimates-count').textContent = `${data.confirmed_estimates_count} Orders`
+                    document.getElementById('confirmed-estimates-charged').textContent = `KSh. ${data.confirmed_estimates_charged}`
+                    document.getElementById('in-progress-jobs-count').textContent = `${data.in_progress_jobs_count} Orders`
+                    document.getElementById('in-progress-jobs-charged').textContent = `KSh. ${data.in_progress_jobs_charged}`
+                    document.getElementById('done-jobs-count').textContent = `${data.done_jobs_count} Orders`
+                    document.getElementById('done-jobs-charged').textContent = `KSh. ${data.done_jobs_charged}`
+                })
+                .catch((error) => {
+                    iziToast.error({
+                        title: 'Error',
+                        message: error,
+                        maxWidth: 310
+                    })
+                })
         }
 
-        // sales chart
-        const salesCard = document.getElementById('sales-chart')
-        const salesChart = new Chart(salesCard, {
-            type: 'bar',
-            data: {
-                datasets: [
-                    {
-                        label: 'Sales revenue',
-                        data: [10, 20, 30, 40, 20, 30, 40],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                    },
-                    {
-                        label: 'Cash',
-                        data: [6, 15, 19, 20, 19, 15, 19],
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        type: 'line',
-                        fill: false,
-                    },
-                    {
-                        label: 'Bank',
-                        data: [3, 5, 9, 4, 12, 10, 15],
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        type: 'line',
-                        fill: false,
-                    },
-                    {
-                        label: 'M-Pesa',
-                        data: [8, 15, 29, 24, 11, 22, 29],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        type: 'line',
-                        fill: false,
-                    },
-                ],
-                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            },
-            options: chartOptions
-        })
+        const populateSalesChart = salesData => {
+            let chartOptions = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+            const salesCard = document.getElementById('sales-chart')
+            new Chart(salesCard, {
+                type: 'bar',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Sales',
+                            data: salesData.overall_job_charges,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                        },
+                        {
+                            label: 'Cash',
+                            data: salesData.cash_job_charges,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            type: 'line',
+                            fill: false,
+                        },
+                        {
+                            label: 'Card',
+                            data: salesData.card_job_charges,
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            type: 'line',
+                            fill: false,
+                        },
+                        {
+                            label: 'M-Pesa',
+                            data: salesData.mpesa_job_charges,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            type: 'line',
+                            fill: false,
+                        },
+                    ],
+                    labels: salesData.chart_dates
+                },
+                options: chartOptions
+            })
+        }
+
+        const populateTopEarnersChart = topEarnersData => {
+            let chartOptions = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+            const topEarnersCard = document.getElementById('top-earners-chart')
+            new Chart(topEarnersCard, {
+                type: 'horizontalBar',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Sales',
+                            data: topEarnersData.map(staff => staff.job__charged),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                        },
+                    ],
+                    labels: topEarnersData.map(staff => staff.name)
+                },
+                options: chartOptions
+            })
+        }
+
+        fetchDashboardData()
     </script>
 {% endblock %}
