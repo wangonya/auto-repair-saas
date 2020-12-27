@@ -53,10 +53,10 @@ class JobFactory(factory.django.DjangoModelFactory):
     vehicle = factory.SubFactory(VehicleFactory)
     charged = factory.LazyAttribute(lambda _: fake.random_int())
     due_start_date = factory.LazyAttribute(
-        lambda _: fake.date_between(start_date='today', end_date='+1w')
+        lambda _: fake.date_between(start_date='-1y', end_date='today')
     )
     due_end_date = factory.LazyAttribute(
-        lambda _: fake.date_between(start_date='+1w', end_date='+4w')
+        lambda _: fake.date_between(start_date='-1y', end_date='today')
     )
     assigned = factory.SubFactory(StaffFactory)
     status = factory.LazyAttribute(lambda _: fake.random_element(
@@ -65,3 +65,9 @@ class JobFactory(factory.django.DjangoModelFactory):
     payment_method = factory.LazyAttribute(lambda _: fake.random_element(
         elements=('cash', 'card', 'mpesa',)
     ))
+    paid = factory.LazyAttribute(lambda _: fake.random_element(
+        elements=(True, False)
+    ))
+    payment_registered_on = factory.LazyAttribute(
+        lambda _: fake.date_between(start_date='-1y', end_date='today')
+    )
