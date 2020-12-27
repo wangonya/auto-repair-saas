@@ -20,7 +20,36 @@ class DashboardView(LoginRequiredMixin, View):
 
 class DashboardDataView(LoginRequiredMixin, View):
     @staticmethod
-    def _compute_dashboard_data(period_range):
+    def _get_sales_chart_data(period, period_range, sales):
+        overall_job_charges = list()
+        cash_job_charges = list()
+        card_job_charges = list()
+        mpesa_job_charges = list()
+        chart_dates = list()
+
+        if period == 'year':
+            return
+
+        for day in range(0, (period_range[1].day - period_range[0].day) + 1):
+            _date = period_range[0] + timedelta(day)
+            chart_dates.append(_date.date())
+            overall_job_charges.append(sales.filter(
+                payment_registered_on=_date
+            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+            cash_job_charges.append(sales.filter(
+                payment_registered_on=_date, payment_method='cash'
+            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+            card_job_charges.append(sales.filter(
+                payment_registered_on=_date, payment_method='card'
+            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+            mpesa_job_charges.append(sales.filter(
+                payment_registered_on=_date, payment_method='mpesa'
+            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+
+        return (overall_job_charges, cash_job_charges, card_job_charges,
+                mpesa_job_charges, chart_dates)
+
+    def _compile_dashboard_data(self, period, period_range):
         dashboard_data = dict()
         all_jobs = Job.objects.all()
         period_range_jobs = all_jobs.filter(
@@ -44,28 +73,9 @@ class DashboardDataView(LoginRequiredMixin, View):
         jobs_in_progress = period_range_jobs.filter(status='in_progress')
         jobs_done = period_range_jobs.filter(status='done')
 
-        overall_job_charges = list()
-        cash_job_charges = list()
-        card_job_charges = list()
-        mpesa_job_charges = list()
-        chart_dates = list()
-
-        for day in range(0, (period_range[1].day - period_range[0].day) + 1):
-            _date = period_range[0] + timedelta(day)
-
-            chart_dates.append(_date.date())
-            overall_job_charges.append(sales.filter(
-                payment_registered_on=_date
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            cash_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='cash'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            card_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='card'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            mpesa_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='mpesa'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+        (overall_job_charges, cash_job_charges,
+         card_job_charges, mpesa_job_charges,
+         chart_dates) = self._get_sales_chart_data(period, period_range, sales)
 
         dashboard_data['sales'] = sum(overall_job_charges)
         dashboard_data['chart_dates'] = chart_dates
@@ -73,25 +83,18 @@ class DashboardDataView(LoginRequiredMixin, View):
         dashboard_data['cash_job_charges'] = cash_job_charges
         dashboard_data['card_job_charges'] = card_job_charges
         dashboard_data['mpesa_job_charges'] = mpesa_job_charges
-        dashboard_data['pending_estimates_count'] = pending_estimates.count()
-        dashboard_data[
-            'pending_estimates_charged'] = pending_estimates.aggregate(
-            Sum('charged')).get('charged__sum') or 0
-        dashboard_data[
-            'confirmed_estimates_count'] = confirmed_estimates.count()
-        dashboard_data[
-            'confirmed_estimates_charged'] = confirmed_estimates.aggregate(
-            Sum('charged')).get('charged__sum') or 0
-        dashboard_data['in_progress_jobs_count'] = jobs_in_progress.count()
-        dashboard_data[
-            'in_progress_jobs_charged'] = jobs_in_progress.aggregate(
-            Sum('charged')).get('charged__sum') or 0
-        dashboard_data[
-            'done_jobs_count'] = jobs_done.count()
-        dashboard_data[
-            'done_jobs_charged'] = jobs_done.aggregate(
-            Sum('charged')).get('charged__sum') or 0
         dashboard_data['top_earners'] = list(top_earners)
+
+        job_states = (
+            (pending_estimates, 'pending_estimates'),
+            (confirmed_estimates, 'confirmed_estimates'),
+            (jobs_in_progress, 'jobs_in_progress'),
+            (jobs_done, 'jobs_done')
+        )
+        for job_state in job_states:
+            dashboard_data[f'{job_state[1]}_count'] = job_state[0].count()
+            dashboard_data[f'{job_state[1]}_charged'] = job_state[0].aggregate(
+                Sum('charged')).get('charged__sum') or 0
 
         return dashboard_data
 
@@ -111,5 +114,5 @@ class DashboardDataView(LoginRequiredMixin, View):
             period_range_floor.replace(hour=0, minute=0), period_range_ceil
         )
 
-        data = self._compute_dashboard_data(period_range)
+        data = self._compile_dashboard_data(period, period_range)
         return JsonResponse(data)

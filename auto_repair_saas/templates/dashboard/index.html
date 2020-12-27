@@ -33,7 +33,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-6">
             <div class="card">
                 <div class="card-body">
@@ -84,6 +84,7 @@
             fetch(`/dashboard/data?period=${period}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
                     document.getElementById('total-sales').textContent = `KSh. ${data.sales.toLocaleString()}`
                     populateSalesChart(data)
                     populateTopEarnersChart(data.top_earners)
@@ -91,10 +92,10 @@
                     document.getElementById('pending-estimates-charged').textContent = `KSh. ${data.pending_estimates_charged}`
                     document.getElementById('confirmed-estimates-count').textContent = `${data.confirmed_estimates_count} Orders`
                     document.getElementById('confirmed-estimates-charged').textContent = `KSh. ${data.confirmed_estimates_charged}`
-                    document.getElementById('in-progress-jobs-count').textContent = `${data.in_progress_jobs_count} Orders`
-                    document.getElementById('in-progress-jobs-charged').textContent = `KSh. ${data.in_progress_jobs_charged}`
-                    document.getElementById('done-jobs-count').textContent = `${data.done_jobs_count} Orders`
-                    document.getElementById('done-jobs-charged').textContent = `KSh. ${data.done_jobs_charged}`
+                    document.getElementById('in-progress-jobs-count').textContent = `${data.jobs_in_progress_count} Orders`
+                    document.getElementById('in-progress-jobs-charged').textContent = `KSh. ${data.jobs_in_progress_charged}`
+                    document.getElementById('done-jobs-count').textContent = `${data.jobs_done_count} Orders`
+                    document.getElementById('done-jobs-charged').textContent = `KSh. ${data.jobs_done_charged}`
                 })
                 .catch((error) => {
                     iziToast.error({
