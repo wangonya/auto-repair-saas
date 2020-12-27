@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from dateutil import rrule
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.http import JsonResponse
@@ -28,23 +29,49 @@ class DashboardDataView(LoginRequiredMixin, View):
         chart_dates = list()
 
         if period == 'year':
-            return
-
-        for day in range(0, (period_range[1].day - period_range[0].day) + 1):
-            _date = period_range[0] + timedelta(day)
-            chart_dates.append(_date.date())
-            overall_job_charges.append(sales.filter(
-                payment_registered_on=_date
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            cash_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='cash'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            card_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='card'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
-            mpesa_job_charges.append(sales.filter(
-                payment_registered_on=_date, payment_method='mpesa'
-            ).aggregate(Sum('charged')).get('charged__sum') or 0)
+            for day in rrule.rrule(
+                    rrule.MONTHLY, dtstart=period_range[0],
+                    until=period_range[1]
+            ):
+                day = day.date()
+                chart_dates.append(day.strftime("%B-%Y"))
+                overall_job_charges.append(sales.filter(
+                    payment_registered_on__year=day.year,
+                    payment_registered_on__month=day.month
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                cash_job_charges.append(sales.filter(
+                    payment_registered_on__year=day.year,
+                    payment_registered_on__month=day.month,
+                    payment_method='cash'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                card_job_charges.append(sales.filter(
+                    payment_registered_on__year=day.year,
+                    payment_registered_on__month=day.month,
+                    payment_method='card'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                mpesa_job_charges.append(sales.filter(
+                    payment_registered_on__year=day.year,
+                    payment_registered_on__month=day.month,
+                    payment_method='mpesa'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+        else:
+            for day in rrule.rrule(
+                    rrule.DAILY, dtstart=period_range[0], until=period_range[1]
+            ):
+                day = day.date()
+                chart_dates.append(day)
+                overall_job_charges.append(sales.filter(
+                    payment_registered_on=day
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                cash_job_charges.append(sales.filter(
+                    payment_registered_on=day, payment_method='cash'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                card_job_charges.append(sales.filter(
+                    payment_registered_on=day, payment_method='card'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
+                mpesa_job_charges.append(sales.filter(
+                    payment_registered_on=day, payment_method='mpesa'
+                ).aggregate(Sum('charged')).get('charged__sum') or 0)
 
         return (overall_job_charges, cash_job_charges, card_job_charges,
                 mpesa_job_charges, chart_dates)
@@ -66,7 +93,9 @@ class DashboardDataView(LoginRequiredMixin, View):
             job__paid=True,
             job__payment_registered_on__gte=period_range[0],
             job__payment_registered_on__lte=period_range[1]
-        ).order_by('-job__charged').values('job__charged', 'name')[:3]
+        ).values('name').annotate(
+            earnings=Sum('job__charged')
+        ).order_by('-earnings')[:5]
 
         pending_estimates = period_range_jobs.filter(status='pending')
         confirmed_estimates = period_range_jobs.filter(status='confirmed')
@@ -106,13 +135,12 @@ class DashboardDataView(LoginRequiredMixin, View):
         if period == 'month':
             period_range_floor = now - timedelta(30)
         elif period == 'year':
-            period_range_floor = now - timedelta(364)
+            period_range_floor = now.replace(year=now.year - 1, day=1)
         else:
             period_range_floor = now - timedelta(6)
 
         period_range = (
             period_range_floor.replace(hour=0, minute=0), period_range_ceil
         )
-
         data = self._compile_dashboard_data(period, period_range)
         return JsonResponse(data)

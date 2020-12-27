@@ -17,7 +17,7 @@ class Job(models.Model):
                               ('card', 'Card'),
                               ('mpesa', 'M-Pesa'))
     client = models.ForeignKey(Contact, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateField(auto_now_add=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     due_start_date = models.DateField(null=True, blank=True)
     due_end_date = models.DateField(null=True, blank=True)

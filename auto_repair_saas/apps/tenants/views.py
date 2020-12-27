@@ -14,7 +14,7 @@ def seed_data(request, *args, **kwargs):
     for model in (Job, Staff, Vehicle, Contact,):
         model.objects.all().delete()
 
-    for _ in range(0, 15):
+    for _ in range(0, 20):
         JobFactory()
     for _ in range(0, 5):
         ContactFactory(contact_type='supplier')

@@ -5,10 +5,16 @@
             <h4>Dashboard</h4>
         </div>
         <div class="col">
-            <div class="btn-group shadow-0  float-end" role="group">
-                <button type="button" class="btn btn-primary active" id="data-week">Week</button>
-                <button type="button" class="btn btn-primary" id="data-month">Month</button>
-                <button type="button" class="btn btn-primary" id="data-year">Year</button>
+            <div class="btn-group shadow-0 float-end" role="group">
+                <button type="button" class="btn btn-primary" id="data-week"
+                        onclick="fetchDashboardData('week')">Week
+                </button>
+                <button type="button" class="btn btn-primary" id="data-month"
+                        onclick="fetchDashboardData('month')">Month
+                </button>
+                <button type="button" class="btn btn-primary" id="data-year"
+                        onclick="fetchDashboardData('year')">Year
+                </button>
             </div>
         </div>
     </div>
@@ -40,7 +46,7 @@
                     <p class="card-title text-muted text-uppercase">Top earners</p>
                     <div class="row">
                         <div class="col-12">
-                            <canvas id="top-earners-chart" height="80"></canvas>
+                            <canvas id="top-earners-chart" height="110"></canvas>
                         </div>
                     </div>
                 </div>
@@ -80,11 +86,34 @@
     </div>
 
     <script>
-        const fetchDashboardData = (period = 'week') => {
+        let salesChart, topEarnersChart
+        const fetchDashboardData = (period) => {
+            let active = document.querySelectorAll(".custom-active-blue");
+            [].forEach.call(active, function (el) {
+                el.classList.remove("custom-active-blue")
+            })
+            if (period === 'month') {
+                document.getElementById('data-month').classList.add('custom-active-blue')
+            } else if (period === 'year') {
+                document.getElementById('data-year').classList.add('custom-active-blue')
+            } else {
+                document.getElementById('data-week').classList.add('custom-active-blue')
+            }
+
+            iziToast.show({
+                title: "Loading",
+                message: "Please wait...",
+                position: "center",
+                class: "izitoast_loader",
+                overlay: true,
+                timeout: false,
+                close: false,
+                transitionIn: 'flipInX',
+                transitionOut: 'flipOutX',
+            })
             fetch(`/dashboard/data?period=${period}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
                     document.getElementById('total-sales').textContent = `KSh. ${data.sales.toLocaleString()}`
                     populateSalesChart(data)
                     populateTopEarnersChart(data.top_earners)
@@ -104,9 +133,11 @@
                         maxWidth: 310
                     })
                 })
+            iziToast.hide({}, document.querySelector('.izitoast_loader'))
         }
 
         const populateSalesChart = salesData => {
+            salesChart && salesChart.destroy()
             let chartOptions = {
                 scales: {
                     yAxes: [{
@@ -117,7 +148,7 @@
                 }
             }
             const salesCard = document.getElementById('sales-chart')
-            new Chart(salesCard, {
+            salesChart = new Chart(salesCard, {
                 type: 'bar',
                 data: {
                     datasets: [
@@ -159,6 +190,7 @@
         }
 
         const populateTopEarnersChart = topEarnersData => {
+            topEarnersChart && topEarnersChart.destroy()
             let chartOptions = {
                 scales: {
                     yAxes: [{
@@ -169,13 +201,13 @@
                 }
             }
             const topEarnersCard = document.getElementById('top-earners-chart')
-            new Chart(topEarnersCard, {
+            topEarnersChart = new Chart(topEarnersCard, {
                 type: 'horizontalBar',
                 data: {
                     datasets: [
                         {
                             label: 'Sales',
-                            data: topEarnersData.map(staff => staff.job__charged),
+                            data: topEarnersData.map(staff => staff.earnings),
                             backgroundColor: 'rgba(54, 162, 235, 0.2)',
                             borderColor: 'rgba(54, 162, 235, 1)',
                         },
@@ -186,6 +218,6 @@
             })
         }
 
-        fetchDashboardData()
+        fetchDashboardData(period = 'week')
     </script>
 {% endblock %}
