@@ -81,7 +81,3 @@ class JobsTestCase(BaseTestCase):
         self.assertEqual(response.context[get_job_status_count(job_1)], 1)
         response = self.client.get(f'/jobs/search?q={job_2.client.name}')
         self.assertEqual(response.context[get_job_status_count(job_2)], 1)
-        response = self.client.get(f'/jobs/search?q={job_2.client.name}')
-        self.assertEqual(response.context[get_job_status_count(job_1)], 0)
-        response = self.client.get(f'/jobs/search?q={job_1.client.name}')
-        self.assertEqual(response.context[get_job_status_count(job_2)], 0)
