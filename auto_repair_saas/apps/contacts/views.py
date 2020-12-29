@@ -8,14 +8,14 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.contacts.forms import NewContactForm, \
-    SearchContactsForm
+from auto_repair_saas.apps.contacts.forms import NewContactForm
 from auto_repair_saas.apps.contacts.models import Contact
+from auto_repair_saas.apps.utils.search import SearchForm
 
 
 class ContactsView(LoginRequiredMixin, View):
     template_name = 'contacts/index.html'
-    search_form_class = SearchContactsForm
+    search_form_class = SearchForm
     contact_form_class = NewContactForm
 
     def get(self, request):
@@ -68,7 +68,7 @@ class DeleteContactView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 class ContactsSearchView(LoginRequiredMixin, View):
-    search_form_class = SearchContactsForm
+    search_form_class = SearchForm
     contact_form_class = NewContactForm
     template_name = 'contacts/index.html'
 

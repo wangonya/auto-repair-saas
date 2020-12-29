@@ -8,14 +8,14 @@ from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.vehicles.forms import NewVehicleForm, \
-    SearchVehiclesForm
+from auto_repair_saas.apps.utils.search import SearchForm
+from auto_repair_saas.apps.vehicles.forms import NewVehicleForm
 from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
 class VehiclesView(LoginRequiredMixin, View):
     form_class = NewVehicleForm
-    search_form_class = SearchVehiclesForm
+    search_form_class = SearchForm
     template_name = 'vehicles/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -75,7 +75,7 @@ def load_client_vehicles(request):
 
 
 class VehiclesSearchView(LoginRequiredMixin, View):
-    search_form_class = SearchVehiclesForm
+    search_form_class = SearchForm
     vehicle_form_class = NewVehicleForm
     template_name = 'vehicles/index.html'
 

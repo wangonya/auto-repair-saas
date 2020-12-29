@@ -8,13 +8,14 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.jobs.forms import NewJobForm, SearchJobsForm
+from auto_repair_saas.apps.jobs.forms import NewJobForm
 from auto_repair_saas.apps.jobs.models import Job
+from auto_repair_saas.apps.utils.search import SearchForm
 
 
 class JobsView(LoginRequiredMixin, View):
     form_class = NewJobForm
-    search_form = SearchJobsForm
+    search_form = SearchForm
     template_name = 'jobs/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -55,7 +56,7 @@ class JobsView(LoginRequiredMixin, View):
 
 
 class JobsSearchView(LoginRequiredMixin, View):
-    search_form_class = SearchJobsForm
+    search_form_class = SearchForm
     job_form_class = NewJobForm
     template_name = 'jobs/index.html'
 

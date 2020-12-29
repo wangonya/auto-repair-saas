@@ -63,13 +63,3 @@ class NewJobForm(forms.Form):
         choices=payment_method_choices,
         widget=forms.Select(attrs=select_attrs)
     )
-
-
-class SearchJobsForm(forms.Form):
-    input_attrs = {
-        'class': 'form-control shadow-2',
-        'style': 'background-color: #fff'
-    }
-    q = forms.CharField(
-        widget=forms.TextInput(attrs=input_attrs), required=False
-    )

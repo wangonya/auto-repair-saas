@@ -8,14 +8,15 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.staff.forms import NewStaffForm, SearchStaffForm
+from auto_repair_saas.apps.staff.forms import NewStaffForm
 from auto_repair_saas.apps.staff.models import Staff
+from auto_repair_saas.apps.utils.search import SearchForm
 
 
 class StaffView(LoginRequiredMixin, View):
     template_name = 'staff/index.html'
     form_class = NewStaffForm
-    search_form_class = SearchStaffForm
+    search_form_class = SearchForm
 
     def get(self, request):
         form = self.form_class()
@@ -62,7 +63,7 @@ class DeleteStaffView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 class StaffSearchView(LoginRequiredMixin, View):
-    search_form_class = SearchStaffForm
+    search_form_class = SearchForm
     staff_form_class = NewStaffForm
     template_name = 'staff/index.html'
 
