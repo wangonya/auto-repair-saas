@@ -5,10 +5,24 @@
             <h4>Jobs</h4>
         </div>
         <div class="col">
-            <button class="btn btn-primary float-end"
-                    data-mdb-toggle="modal"
-                    data-mdb-target="#jobFormModal">New Job
-            </button>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary float-end"
+                            data-mdb-toggle="modal"
+                            data-mdb-target="#jobFormModal"
+                            title="Create New Job">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="col">
+                    <form action="{% url 'search-jobs' %}" method="get" id="job-search-form">
+                        <div class="form-outline">
+                            {{ search_form.q }}
+                            <label class="form-label" for="id_q"><i class="fas fa-search me-2"></i> Search</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -23,7 +37,7 @@
                     role="tab"
                     aria-controls="estimates-tab"
                     aria-selected="true"
-            >Estimates</a
+            >Estimates ({{ estimates_count }})</a
             >
         </li>
         <li class="nav-item" role="presentation">
@@ -35,7 +49,7 @@
                     role="tab"
                     aria-controls="in-progress-tab"
                     aria-selected="false"
-            >In Progress</a
+            >In Progress ({{ in_progress_count }})</a
             >
         </li>
         <li class="nav-item" role="presentation">
@@ -47,7 +61,7 @@
                     role="tab"
                     aria-controls="done-tab"
                     aria-selected="false"
-            >Done</a
+            >Done ({{ done_count }})</a
             >
         </li>
     </ul>

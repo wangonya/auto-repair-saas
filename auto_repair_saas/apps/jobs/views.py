@@ -1,18 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.postgres.search import SearchVector
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.jobs.forms import NewJobForm
+from auto_repair_saas.apps.jobs.forms import NewJobForm, SearchJobsForm
 from auto_repair_saas.apps.jobs.models import Job
 
 
 class JobsView(LoginRequiredMixin, View):
     form_class = NewJobForm
+    search_form = SearchJobsForm
     template_name = 'jobs/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -21,11 +23,16 @@ class JobsView(LoginRequiredMixin, View):
         in_progress = jobs.filter(status='in_progress')
         done = jobs.filter(status='done')
         form = self.form_class()
+        search_form = self.search_form()
         context = {
             'estimates': estimates,
+            'estimates_count': estimates.count(),
             'in_progress': in_progress,
+            'in_progress_count': in_progress.count(),
             'done': done,
-            'form': form
+            'done_count': done.count(),
+            'form': form,
+            'search_form': search_form
         }
         return render(
             request, self.template_name, context
@@ -45,6 +52,44 @@ class JobsView(LoginRequiredMixin, View):
             error = 'Form is invalid.'
             messages.error(request, error)
             return HttpResponseRedirect(reverse('jobs'))
+
+
+class JobsSearchView(LoginRequiredMixin, View):
+    search_form_class = SearchJobsForm
+    job_form_class = NewJobForm
+    template_name = 'jobs/index.html'
+
+    def get(self, request, *args, **kwargs):
+        search_form = self.search_form_class(request.GET)
+        job_form = self.job_form_class()
+
+        if not search_form.is_valid():
+            HttpResponseRedirect(reverse('jobs'))
+
+        if search_form.cleaned_data.get('q') == '':
+            jobs = Job.objects.all()
+        else:
+            jobs = Job.objects.annotate(
+                search=SearchVector('client__name', 'vehicle__number_plate'),
+            ).filter(search=search_form.cleaned_data.get('q'))
+
+        estimates = jobs.exclude(status__in=('in_progress', 'done'))
+        in_progress = jobs.filter(status='in_progress')
+        done = jobs.filter(status='done')
+
+        context = {
+            'estimates': estimates,
+            'estimates_count': estimates.count(),
+            'in_progress': in_progress,
+            'in_progress_count': in_progress.count(),
+            'done': done,
+            'done_count': done.count(),
+            'form': job_form,
+            'search_form': search_form
+        }
+        return render(
+            request, self.template_name, context
+        )
 
 
 class UpdateJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

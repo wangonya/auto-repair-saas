@@ -50,3 +50,18 @@ class StaffTestCase(BaseTestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertTrue(len(messages) == 1)
         self.assertEqual('Staff member deleted.', messages[0])
+
+    def test_search_staff(self):
+        staff_1 = StaffFactory()
+        staff_2 = StaffFactory()
+
+        response = self.client.get(
+            f'/staff/search?q={staff_1.name}'
+        )
+        self.assertEqual(response.context['staff'].count(), 1)
+        response = self.client.get(
+            f'/staff/search?q={staff_2.email}'
+        )
+        self.assertEqual(response.context['staff'].count(), 1)
+        response = self.client.get(f'/staff/search?q=')
+        self.assertEqual(response.context['staff'].count(), 2)
