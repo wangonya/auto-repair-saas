@@ -8,7 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, DeleteView
 
-from auto_repair_saas.apps.jobs.forms import NewJobForm
+from auto_repair_saas.apps.jobs.forms import NewJobForm, RegisterPaymentForm
 from auto_repair_saas.apps.jobs.models import Job
 from auto_repair_saas.apps.utils.search import SearchForm
 
@@ -16,6 +16,7 @@ from auto_repair_saas.apps.utils.search import SearchForm
 class JobsView(LoginRequiredMixin, View):
     form_class = NewJobForm
     search_form = SearchForm
+    register_payment_form = RegisterPaymentForm
     template_name = 'jobs/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -25,6 +26,7 @@ class JobsView(LoginRequiredMixin, View):
         done = jobs.filter(status='done')
         form = self.form_class()
         search_form = self.search_form()
+        register_payment_form = self.register_payment_form()
         context = {
             'estimates': estimates,
             'estimates_count': estimates.count(),
@@ -33,7 +35,8 @@ class JobsView(LoginRequiredMixin, View):
             'done': done,
             'done_count': done.count(),
             'form': form,
-            'search_form': search_form
+            'search_form': search_form,
+            'register_payment_form': register_payment_form,
         }
         return render(
             request, self.template_name, context
@@ -99,6 +102,16 @@ class UpdateJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     fields = [*form.fields]
     success_url = reverse_lazy('jobs')
     success_message = 'Job updated.'
+
+
+class RegisterJobPaymentView(
+    LoginRequiredMixin, SuccessMessageMixin, UpdateView
+):
+    model = Job
+    form = RegisterPaymentForm()
+    fields = [*form.fields]
+    success_url = reverse_lazy('jobs')
+    success_message = 'Payment registered.'
 
 
 class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
