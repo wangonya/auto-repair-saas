@@ -81,3 +81,12 @@ class JobsTestCase(BaseTestCase):
         self.assertEqual(response.context[get_job_status_count(job_1)], 1)
         response = self.client.get(f'/jobs/search?q={job_2.client.name}')
         self.assertEqual(response.context[get_job_status_count(job_2)], 1)
+
+    def test_register_payment(self):
+        job = JobFactory(paid=False, charged=5000)
+        response = self.client.post(
+            reverse('pay-job', kwargs={'pk': job.id}),
+        )
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertTrue(len(messages) == 1)
+        self.assertEqual('Payment registered.', messages[0])

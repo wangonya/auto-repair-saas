@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 
 from auto_repair_saas.apps.contacts.models import Contact
@@ -62,4 +64,11 @@ class NewJobForm(forms.Form):
     payment_method = forms.ChoiceField(
         choices=payment_method_choices,
         widget=forms.Select(attrs=select_attrs)
+    )
+
+
+class RegisterPaymentForm(forms.Form):
+    paid = forms.BooleanField(initial=True, widget=forms.HiddenInput())
+    payment_registered_on = forms.DateField(
+        initial=date.today(), widget=forms.HiddenInput()
     )
