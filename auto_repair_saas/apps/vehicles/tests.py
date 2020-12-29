@@ -61,3 +61,18 @@ class VehicleTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'vehicles/vehicle_list_options.html')
         self.assertIsNotNone(response.context.get('vehicles'))
+
+    def test_search_vehicle(self):
+        vehicle_1 = VehicleFactory()
+        vehicle_2 = VehicleFactory()
+
+        response = self.client.get(
+            f'/vehicles/search?q={vehicle_1.number_plate}'
+        )
+        self.assertEqual(response.context['vehicles'].count(), 1)
+        response = self.client.get(
+            f'/vehicles/search?q={vehicle_2.number_plate}'
+        )
+        self.assertEqual(response.context['vehicles'].count(), 1)
+        response = self.client.get(f'/vehicles/search?q=')
+        self.assertEqual(response.context['vehicles'].count(), 2)

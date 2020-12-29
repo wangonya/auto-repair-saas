@@ -50,3 +50,18 @@ class ContactsTestCase(BaseTestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertTrue(len(messages) == 1)
         self.assertEqual('Contact deleted.', messages[0])
+
+    def test_search_contact(self):
+        contact_1 = ContactFactory()
+        contact_2 = ContactFactory()
+
+        response = self.client.get(
+            f'/contacts/search?q={contact_1.name}'
+        )
+        self.assertEqual(response.context['clients_count'], 1)
+        response = self.client.get(
+            f'/contacts/search?q={contact_2.name}'
+        )
+        self.assertEqual(response.context['clients_count'], 1)
+        response = self.client.get(f'/contacts/search?q=')
+        self.assertEqual(response.context['clients_count'], 2)

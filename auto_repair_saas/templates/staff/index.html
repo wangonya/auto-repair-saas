@@ -5,10 +5,24 @@
             <h4>Staff</h4>
         </div>
         <div class="col">
-            <button class="btn btn-primary float-end"
-                    data-mdb-toggle="modal"
-                    data-mdb-target="#staffFormModal">New Staff member
-            </button>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary float-end"
+                            data-mdb-toggle="modal"
+                            data-mdb-target="#staffFormModal"
+                            title="Create New Staff Member">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="col">
+                    <form action="{% url 'search-staff' %}" method="get" id="staff-search-form">
+                        <div class="form-outline">
+                            {{ search_form.q }}
+                            <label class="form-label" for="id_q"><i class="fas fa-search me-2"></i> Search</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -22,7 +36,7 @@
                             <img class="rounded-circle"
                                  height="35"
                                  loading="lazy" alt="{{ member.name }}"
-                                 src="https://i.pravatar.cc/40?u={{ member.name }}">
+                                 src="https://ui-avatars.com/api/?name={{ member.name }}&background=random">
                             <span class="fs-5 ps-2">{{ member.name }}</span>
                             <div class="float-end">
                                 <div class="dropdown pt-1">

@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.postgres.search import SearchVector
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -9,23 +10,31 @@ from django.views.generic import UpdateView, DeleteView
 
 from auto_repair_saas.apps.contacts.forms import NewContactForm
 from auto_repair_saas.apps.contacts.models import Contact
+from auto_repair_saas.apps.utils.search import SearchForm
 
 
 class ContactsView(LoginRequiredMixin, View):
     template_name = 'contacts/index.html'
-    form_class = NewContactForm
+    search_form_class = SearchForm
+    contact_form_class = NewContactForm
 
     def get(self, request):
-        form = self.form_class()
+        contact_form = self.contact_form_class()
+        search_form = self.search_form_class()
+        clients = Contact.objects.filter(contact_type='client')
+        suppliers = Contact.objects.filter(contact_type='supplier')
         context = {
-            'clients': Contact.objects.filter(contact_type='client'),
-            'suppliers': Contact.objects.filter(contact_type='supplier'),
-            'form': form
+            'clients': clients,
+            'clients_count': clients.count(),
+            'suppliers': suppliers,
+            'suppliers_count': suppliers.count(),
+            'form': contact_form,
+            'search_form': search_form
         }
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = self.contact_form_class(request.POST)
         if form.is_valid():
             try:
                 Contact.objects.create(**form.cleaned_data)
@@ -56,3 +65,38 @@ class DeleteContactView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super(DeleteContactView, self).delete(request, *args, **kwargs)
+
+
+class ContactsSearchView(LoginRequiredMixin, View):
+    search_form_class = SearchForm
+    contact_form_class = NewContactForm
+    template_name = 'contacts/index.html'
+
+    def get(self, request, *args, **kwargs):
+        search_form = self.search_form_class(request.GET)
+        contact_form = self.contact_form_class()
+
+        if not search_form.is_valid():
+            HttpResponseRedirect(reverse('contacts'))
+
+        if search_form.cleaned_data.get('q') == '':
+            contacts = Contact.objects.all()
+        else:
+            contacts = Contact.objects.annotate(
+                search=SearchVector('name', 'email', 'phone'),
+            ).filter(search=search_form.cleaned_data.get('q'))
+
+        clients = contacts.filter(contact_type='client')
+        suppliers = contacts.filter(contact_type='supplier')
+
+        context = {
+            'clients': clients,
+            'clients_count': clients.count(),
+            'suppliers': suppliers,
+            'suppliers_count': suppliers.count(),
+            'form': contact_form,
+            'search_form': search_form
+        }
+        return render(
+            request, self.template_name, context
+        )

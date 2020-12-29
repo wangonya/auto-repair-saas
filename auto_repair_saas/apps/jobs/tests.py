@@ -61,3 +61,23 @@ class JobsTestCase(BaseTestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertTrue(len(messages) == 1)
         self.assertEqual('Job deleted.', messages[0])
+
+    def test_search_job(self):
+        job_1 = JobFactory()
+        job_2 = JobFactory()
+
+        def get_job_status_count(job):
+            count = ''
+            status = job.status
+            if status in ('pending', 'confirmed',):
+                count = 'estimates_count'
+            elif status == 'in_progress':
+                count = 'in_progress_count'
+            elif status == 'done':
+                count = 'done_count'
+            return count
+
+        response = self.client.get(f'/jobs/search?q={job_1.client.name}')
+        self.assertEqual(response.context[get_job_status_count(job_1)], 1)
+        response = self.client.get(f'/jobs/search?q={job_2.client.name}')
+        self.assertEqual(response.context[get_job_status_count(job_2)], 1)
