@@ -23,7 +23,7 @@ class NewJobForm(forms.Form):
     date_attrs = {
         'class': 'form-control',
         'type': 'date',
-        'placeholder': 'Select date'
+        'placeholder': 'dd/mm/yyyy'
     }
     job_status_choices = (('pending', 'Pending (Estimate)'),
                           ('confirmed', 'Confirmed (Estimate)'),
@@ -68,8 +68,8 @@ class NewJobForm(forms.Form):
     )
 
     def clean(self):
-        start_date = self.cleaned_data['due_start_date']
-        end_date = self.cleaned_data['due_end_date']
+        start_date = self.cleaned_data.get('due_start_date')
+        end_date = self.cleaned_data.get('due_end_date')
         if not (start_date and end_date):
             return self.cleaned_data
         if start_date > end_date:
