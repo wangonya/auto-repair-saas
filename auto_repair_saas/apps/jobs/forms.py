@@ -51,8 +51,9 @@ class NewJobForm(forms.Form):
         attrs={**input_attrs, **{'rows': 3}}), required=False
     )
     assigned = forms.ModelChoiceField(
+        required=False,
         queryset=Staff.objects.all(),
-        widget=forms.Select(attrs=select_attrs), required=False
+        widget=forms.Select(attrs=select_attrs)
     )
     charged = forms.CharField(widget=forms.NumberInput(
         attrs={**input_attrs, **{'value': 0}}), required=False
@@ -65,6 +66,16 @@ class NewJobForm(forms.Form):
         choices=payment_method_choices,
         widget=forms.Select(attrs=select_attrs)
     )
+
+    def clean(self):
+        start_date = self.cleaned_data['due_start_date']
+        end_date = self.cleaned_data['due_end_date']
+        if not (start_date and end_date):
+            return self.cleaned_data
+        if start_date > end_date:
+            raise forms.ValidationError(
+                'Due start date can not be later than due end date.'
+            )
 
 
 class RegisterPaymentForm(forms.Form):

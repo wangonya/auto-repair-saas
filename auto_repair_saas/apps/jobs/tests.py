@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.contrib.messages import get_messages
 from django.urls import reverse
 from faker import Faker
@@ -23,7 +25,9 @@ class JobsTestCase(BaseTestCase):
             'vehicle': vehicle.id,
             'charged': fake.random_int(),
             'payment_method': 'cash',
-            'status': 'pending'
+            'status': 'pending',
+            'due_start_date': date.today(),
+            'due_end_date': date.today() + timedelta(1)
         }
         response = self.client.post(reverse('jobs'), data)
         messages = [m.message for m in get_messages(response.wsgi_request)]
@@ -90,3 +94,23 @@ class JobsTestCase(BaseTestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertTrue(len(messages) == 1)
         self.assertEqual('Payment registered.', messages[0])
+
+    def test_job_dates_validation(self):
+        client = ContactFactory()
+        vehicle = VehicleFactory(owner=client)
+        data = {
+            'client': client.id,
+            'vehicle': vehicle.id,
+            'charged': fake.random_int(),
+            'payment_method': 'cash',
+            'status': 'pending',
+            'due_start_date': date.today(),
+            'due_end_date': date.today() - timedelta(1)
+        }
+        response = self.client.post(reverse('jobs'), data)
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertTrue(len(messages) == 1)
+        self.assertEqual(
+            'Invalid input. Due start date can not be later than due end date.',
+            messages[0]
+        )
