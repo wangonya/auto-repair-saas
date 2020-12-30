@@ -10,6 +10,7 @@
                     <button class="btn btn-primary float-end"
                             data-mdb-toggle="modal"
                             data-mdb-target="#jobFormModal"
+                            data-mdb-mode="new"
                             title="Create New Job">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -650,6 +651,17 @@
         })
 
         const jobFormModal = document.getElementById('jobFormModal')
+        const modalTitle = jobFormModal.querySelector('#job-form-modal-title')
+        const modalClient = jobFormModal.querySelector('#job-form').querySelector('#id_client')
+        const modalVehicle = jobFormModal.querySelector('#job-form').querySelector('#id_vehicle')
+        const modalDueStartDate = jobFormModal.querySelector('#job-form').querySelector('#id_due_start_date')
+        const modalDueEndDate = jobFormModal.querySelector('#job-form').querySelector('#id_due_end_date')
+        const modalAssigned = jobFormModal.querySelector('#job-form').querySelector('#id_assigned')
+        const modalCharged = jobFormModal.querySelector('#job-form').querySelector('#id_charged')
+        const modalDescription = jobFormModal.querySelector('#job-form').querySelector('#id_description')
+        const modalStatus = jobFormModal.querySelector('#id_status')
+        const modalPaymentMethod = jobFormModal.querySelector('#id_payment_method')
+
         jobFormModal.addEventListener('show.mdb.modal', event => {
             const button = event.relatedTarget
             const modalMode = button.getAttribute('data-mdb-mode')
@@ -667,25 +679,24 @@
                 const jobStatus = button.getAttribute('data-mdb-job-status')
                 const jobPaymentMethod = button.getAttribute('data-mdb-job-payment_method')
 
-                const modalTitle = jobFormModal.querySelector('#job-form-modal-title')
-                const modalClient = jobFormModal.querySelector('#job-form').querySelector('#id_client')
-                const modalVehicle = jobFormModal.querySelector('#job-form').querySelector('#id_vehicle')
-                const modalDueStartDate = jobFormModal.querySelector('#job-form').querySelector('#id_due_start_date')
-                const modalDueEndDate = jobFormModal.querySelector('#job-form').querySelector('#id_due_end_date')
-                const modalAssigned = jobFormModal.querySelector('#job-form').querySelector('#id_assigned')
-                const modalCharged = jobFormModal.querySelector('#job-form').querySelector('#id_charged')
-                const modalDescription = jobFormModal.querySelector('#job-form').querySelector('#id_description')
-                const modalStatus = jobFormModal.querySelector('#id_status')
-                const modalPaymentMethod = jobFormModal.querySelector('#id_payment_method')
-
                 modalTitle.textContent = `Edit job (Job #${jobId})`
                 modalClient.value = jobClient
                 modalVehicle.value = jobVehicle
-                modalDueStartDate.value = jobDueStartDate !== 'None' ? jobDueStartDate : '-'
-                modalDueEndDate.value = jobDueEndDate !== 'None' ? jobDueEndDate : '-'
-                modalAssigned.value = jobAssigned !== null ? jobAssigned : '-'
+                modalDueStartDate.value = jobDueStartDate !== 'None' ? jobDueStartDate : ''
+                let dateToday = new Date()
+                if (modalDueStartDate.value === '') {
+                    modalDueEndDate.setAttribute('min', formatDate(dateToday))
+                } else {
+                    modalDueEndDate.setAttribute('min', modalDueStartDate.value)
+                }
+                modalDueStartDate.onchange = event => {
+                    modalDueEndDate.value = modalDueEndDate.defaultValue
+                    modalDueEndDate.setAttribute('min', modalDueStartDate.value)
+                }
+                modalDueEndDate.value = jobDueEndDate !== 'None' ? jobDueEndDate : ''
+                modalAssigned.value = jobAssigned !== null ? jobAssigned : ''
                 modalCharged.value = jobCharged
-                modalDescription.value = jobDescription !== null ? jobDescription : '-'
+                modalDescription.value = jobDescription !== null ? jobDescription : ''
                 modalStatus.value = jobStatus
                 modalPaymentMethod.value = jobPaymentMethod
 
@@ -707,6 +718,12 @@
                 const submitButton = document.getElementById("submit-job-form")
                 submitButton.textContent = 'Save'
                 return
+            } else {
+                form.reset()
+                modalTitle.textContent = `Create job`
+                form.action = `/jobs/`
+                const submitButton = document.getElementById("submit-job-form")
+                submitButton.textContent = 'Create'
             }
 
             {# load vehicles data depending on selected client #}

@@ -54,6 +54,12 @@ class JobsView(LoginRequiredMixin, View):
                 return HttpResponseRedirect(reverse('jobs'))
         else:
             error = 'Form is invalid.'
+            try:
+                form_error = form.non_field_errors().get_json_data()[0].get(
+                    'message')
+                error = f"Invalid input. {form_error}"
+            except IndexError:
+                pass
             messages.error(request, error)
             return HttpResponseRedirect(reverse('jobs'))
 
