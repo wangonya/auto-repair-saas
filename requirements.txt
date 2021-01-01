@@ -1,12 +1,17 @@
 asgiref==3.3.1
 coverage==5.3
 Django==3.1.4
+django-sendgrid-v5==0.9.0
 django-tenants==3.2.1
 factory-boy==3.1.0
 Faker==5.0.1
+future==0.18.2
 psycopg2-binary==2.8.6
 python-dateutil==2.8.1
+python-http-client==3.3.1
 pytz==2020.4
+sendgrid==6.4.8
 six==1.15.0
 sqlparse==0.4.1
+starkbank-ecdsa==1.1.0
 text-unidecode==1.3
