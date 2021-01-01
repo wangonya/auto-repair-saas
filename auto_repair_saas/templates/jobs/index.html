@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
+    <style>
+        @media print {
+            #job-view-modal-body {
+                background-color: white;
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 15px;
+                font-size: 14px;
+                line-height: 18px;
+            }
+
+            button {
+                visibility: hidden;
+            }
+
+            #job-print-title {
+                display: block !important;
+                font-size: 20px;
+                font-weight: bold;
+            {#margin: 15px !important;#}
+            }
+        }
+    </style>
     <div class="row">
         <div class="col">
             <h4>Jobs</h4>
@@ -516,7 +543,8 @@
                             aria-label="Close"
                     ></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="job-view-modal-body">
+                    <p id="job-print-title" style="display: none"></p>
                     <div class="row">
                         <div class="col mb-2">
                             <span class="fw-bold">Client: </span><span id="view-modal-client"></span>
@@ -560,7 +588,9 @@
                     <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
                         Close
                     </button>
-                    <button type="button" class="btn btn-primary">Print</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()">
+                        Print
+                    </button>
                 </div>
             </div>
         </div>
@@ -628,6 +658,7 @@
             const jobPaymentMethod = button.getAttribute('data-mdb-job-payment_method')
             // Update the modal's content.
             const modalTitle = viewJobModal.querySelector('#view-modal-title')
+            const modalPrintTitle = viewJobModal.querySelector('#job-print-title')
             const modalClient = viewJobModal.querySelector('#view-modal-client')
             const modalVehicle = viewJobModal.querySelector('#view-modal-vehicle')
             const modalDueStartDate = viewJobModal.querySelector('#view-modal-due-start-date')
@@ -639,6 +670,7 @@
             const modalPaymentMethod = viewJobModal.querySelector('#view-modal-payment_method')
 
             modalTitle.textContent = `View job (Job #${jobId})`
+            modalPrintTitle.textContent = `Job #${jobId}`
             modalClient.textContent = jobClient
             modalVehicle.textContent = jobVehicle
             modalDueStartDate.textContent = jobDueStartDate !== 'None' ? jobDueStartDate : '-'
