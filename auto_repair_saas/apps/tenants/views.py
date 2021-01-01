@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import redirect
+from django.urls import reverse
 
 from ..contacts.models import Contact
 from ..jobs.models import Job
@@ -28,4 +29,4 @@ def seed_data(request, *args, **kwargs):
     for job in Job.objects.all().exclude(status='pending'):
         if not job.paid:
             job.payment_registered_on = None
-    return render(request, 'dashboard/index.html')
+    return redirect(reverse('dashboard'))
