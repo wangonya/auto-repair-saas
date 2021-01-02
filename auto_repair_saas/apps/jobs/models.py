@@ -28,11 +28,13 @@ class Job(models.Model):
     charged = models.FloatField(null=True, blank=True, default=0)
     status = models.CharField(
         choices=job_status_choices, max_length=15, null=False, blank=False,
-        default='pending',
+        default='pending', db_index=True
     )
     payment_method = models.CharField(
         choices=payment_method_choices, max_length=6, null=False, blank=False,
-        default='cash',
+        default='cash', db_index=True
     )
-    paid = models.BooleanField(default=False)
-    payment_registered_on = models.DateField(null=True, blank=True)
+    paid = models.BooleanField(default=False, db_index=True)
+    payment_registered_on = models.DateField(
+        null=True, blank=True, db_index=True
+    )

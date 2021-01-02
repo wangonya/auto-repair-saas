@@ -19,7 +19,6 @@ def create_tenant(schema_name='public',
         domain.tenant = tenant
         domain.is_primary = True
         domain.save()
-        print('tenant created')
     except IntegrityError as e:
         if '(domain_url)=(public) already exists.' in e.args[0]:
             # public schema already exists
