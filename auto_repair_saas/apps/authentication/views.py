@@ -1,9 +1,10 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, PasswordResetView, \
     PasswordResetConfirmView as PasswordResetConfirm, \
     PasswordResetDoneView as PasswordResetDone, \
     PasswordResetCompleteView as PasswordResetComplete
-from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -36,17 +37,10 @@ class RegisterUserView(View):
                 User.objects.create_user(
                     form.cleaned_data['name'],
                     form.cleaned_data['email'],
-                    form.cleaned_data['password']
+                    form.cleaned_data['password2']
                 )
                 success = 'Account registered successfully.'
                 messages.success(request, success)
-                send_mail(
-                    'Welcome aboard!',
-                    'Thanks for trying the auto repair shop management app.',
-                    'kwangonya@gmail.com',
-                    [form.cleaned_data['email']],
-                    fail_silently=False,
-                )
                 return HttpResponseRedirect(reverse('login'))
             except IntegrityError:
                 error = 'An account with that email already exists.'
@@ -56,9 +50,16 @@ class RegisterUserView(View):
                     }
                 )
             except Exception as e:
-                error = str(e)
+                logging.error(e)
+                error = 'Sorry, something went wrong. Please try again later.'
                 messages.error(request, error)
                 return HttpResponseRedirect(reverse('register'))
+        else:
+            return render(
+                request, self.template_name, {
+                    'form': form
+                }
+            )
 
 
 class PasswordResetRequestView(PasswordResetView):

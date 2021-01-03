@@ -80,7 +80,7 @@ class DashboardDataView(LoginRequiredMixin, View):
         dashboard_data = dict()
         all_jobs = Job.objects.all()
         period_range_jobs = all_jobs.filter(
-            created_on__gte=period_range[0], created_on__lte=period_range[1]
+            created_at__gte=period_range[0], created_at__lte=period_range[1]
         )
 
         sales = all_jobs.filter(

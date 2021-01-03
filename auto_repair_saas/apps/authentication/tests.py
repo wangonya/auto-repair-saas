@@ -15,13 +15,15 @@ class AuthTestCase(TestCase):
     def test_user_can_register(self):
         username = 'test'
         email = 'test@mail.com'
-        password = 'Testuser123'
+        password1 = 'Testuser123'
+        password2 = 'Testuser123'
         with self.assertRaises(ObjectDoesNotExist):
             User.objects.get(email=email)
         data = {
             'name': username,
             'email': email,
-            'password': password
+            'password1': password1,
+            'password2': password2
         }
         response = self.client.post(
             reverse('register'), data=data
@@ -36,7 +38,8 @@ class AuthTestCase(TestCase):
         data = {
             'name': user.username,
             'email': user.email,
-            'password': user.password
+            'password1': user.password,
+            'password2': user.password
         }
         response = self.client.post(
             reverse('register'), data=data

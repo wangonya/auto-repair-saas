@@ -25,31 +25,23 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', False)
 
-ALLOWED_HOSTS = ['auto-repair-saas-b7w5n.ondigitalocean.app', '127.0.0.1']
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
 # Application definition
 
-SHARED_APPS = (
-    'django_tenants',
-    'auto_repair_saas.apps.tenants',
+INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'auto_repair_saas.apps.authentication'
-)
-
-TENANT_APPS = (
-    'django.contrib.contenttypes',
+    'auto_repair_saas.apps.authentication',
     'auto_repair_saas.apps.dashboard',
     'auto_repair_saas.apps.jobs',
     'auto_repair_saas.apps.contacts',
     'auto_repair_saas.apps.vehicles',
     'auto_repair_saas.apps.staff',
 )
-
-INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'auto_repair_saas.apps.tenants.middleware.TenantMiddleware',
+    'auto_repair_saas.apps.utils.middleware.CurrentUserMiddleware',
 ]
 
 ROOT_URLCONF = 'auto_repair_saas.urls'
@@ -87,7 +79,7 @@ WSGI_APPLICATION = 'auto_repair_saas.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django_tenants.postgresql_backend',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'auto'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
@@ -95,10 +87,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', 5432),
     }
 }
-
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -131,14 +119,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-TENANT_MODEL = "tenants.Tenant"
-TENANT_DOMAIN_MODEL = "tenants.Domain"
-
 AUTH_USER_MODEL = 'authentication.User'
 
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/auth/login'
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
