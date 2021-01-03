@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from ..contacts.models import Contact
-from ..jobs.models import Job
-from ..staff.models import Staff
-from ..utils.factories import ContactFactory, JobFactory
-from ..vehicles.models import Vehicle
+from auto_repair_saas.apps.contacts.models import Contact
+from auto_repair_saas.apps.jobs.models import Job
+from auto_repair_saas.apps.staff.models import Staff
+from auto_repair_saas.apps.utils.factories import ContactFactory, JobFactory
+from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
 @login_required

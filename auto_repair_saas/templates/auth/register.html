@@ -42,20 +42,22 @@
                     <label class="form-label" for="id_email">Email</label>
                 </div>
                 <div class="form-outline mb-4">
-                    {{ form.password }}
-                    <label class="form-label" for="id_password">Password</label>
+                    {{ form.password1 }}
+                    <label class="form-label" for="id_password1">Password</label>
                 </div>
-                {% if form.errors %}
+                <div class="form-outline mb-4">
+                    {{ form.password2 }}
+                    <label class="form-label" for="id_password2">Confirm Password</label>
+                </div>
+                {% if form.non_field_errors %}
                     <small class="text-danger">
-                        {{ form.errors }}
+                        {{ form.non_field_errors }}
                     </small>
-                    <br><br>
                 {% endif %}
                 {% if error %}
                     <small class="text-danger">
                         {{ error }}
                     </small>
-                    <br><br>
                 {% endif %}
                 <button type="submit" class="btn btn-primary btn-block mb-4">Register</button>
             </form>

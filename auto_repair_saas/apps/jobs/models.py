@@ -2,12 +2,13 @@ from django.db import models
 
 from auto_repair_saas.apps.contacts.models import Contact
 from auto_repair_saas.apps.staff.models import Staff
+from auto_repair_saas.apps.utils.models import BaseModel, ModelManager
 from auto_repair_saas.apps.vehicles.models import Vehicle
 
 
-class Job(models.Model):
+class Job(BaseModel):
     class Meta:
-        ordering = ('-created_on', '-id')
+        ordering = ('-created_at', '-id')
 
     job_status_choices = (('pending', 'Pending (Estimate)'),
                           ('confirmed', 'Confirmed (Estimate)'),
@@ -17,7 +18,6 @@ class Job(models.Model):
                               ('card', 'Card'),
                               ('mpesa', 'M-Pesa'))
     client = models.ForeignKey(Contact, on_delete=models.CASCADE)
-    created_on = models.DateField(auto_now_add=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     due_start_date = models.DateField(null=True, blank=True)
     due_end_date = models.DateField(null=True, blank=True)
@@ -38,3 +38,5 @@ class Job(models.Model):
     payment_registered_on = models.DateField(
         null=True, blank=True, db_index=True
     )
+
+    objects = ModelManager()
