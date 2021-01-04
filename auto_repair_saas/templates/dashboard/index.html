@@ -128,6 +128,7 @@
                     document.getElementById('in-progress-jobs-charged').textContent = `KSh. ${data.jobs_in_progress_charged}`
                     document.getElementById('done-jobs-count').textContent = `${data.jobs_done_count} Orders`
                     document.getElementById('done-jobs-charged').textContent = `KSh. ${data.jobs_done_charged}`
+                    clearLoaders()
                 })
                 .catch((error) => {
                     iziToast.error({
@@ -136,14 +137,6 @@
                         maxWidth: 310
                     })
                 })
-            let loaders = document.getElementsByClassName('spinner-border');
-            [].forEach.call(loaders, function (el) {
-                el.setAttribute('hidden', 'true')
-            })
-            let buttons = document.getElementsByClassName('btn');
-            [].forEach.call(buttons, function (el) {
-                el.removeAttribute('disabled')
-            })
         }
 
         const populateSalesChart = salesData => {
@@ -225,6 +218,17 @@
                     labels: topEarnersData.map(staff => staff.name)
                 },
                 options: chartOptions
+            })
+        }
+
+        const clearLoaders = () => {
+            let loaders = document.getElementsByClassName('spinner-border');
+            [].forEach.call(loaders, function (el) {
+                el.setAttribute('hidden', 'true')
+            })
+            let buttons = document.getElementsByClassName('btn');
+            [].forEach.call(buttons, function (el) {
+                el.removeAttribute('disabled')
             })
         }
 
