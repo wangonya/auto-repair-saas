@@ -62,11 +62,19 @@ class ModelManager(models.Manager):
     """filters queries to always return data belonging to current user"""
 
     def get_queryset(self):
-        return super(ModelManager, self).get_queryset().filter(
-            created_by=get_current_user()
-        )
+        try:
+            return super(ModelManager, self).get_queryset().filter(
+                created_by=get_current_user()
+            )
+        except TypeError:
+            # user not logged in
+            pass
 
     def get_object(self):
-        return super(ModelManager, self).get_object().filter(
-            created_by=get_current_user()
-        )
+        try:
+            return super(ModelManager, self).get_object().filter(
+                created_by=get_current_user()
+            )
+        except TypeError:
+            # user not logged in
+            pass
