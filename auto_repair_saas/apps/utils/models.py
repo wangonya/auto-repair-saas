@@ -68,7 +68,7 @@ class ModelManager(models.Manager):
             )
         except TypeError:
             # user not logged in
-            pass
+            return super(ModelManager, self).get_queryset()
 
     def get_object(self):
         try:
@@ -77,4 +77,4 @@ class ModelManager(models.Manager):
             )
         except TypeError:
             # user not logged in
-            pass
+            return super(ModelManager, self).get_object()
