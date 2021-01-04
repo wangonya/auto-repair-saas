@@ -7,13 +7,22 @@
         <div class="col">
             <div class="btn-group shadow-0 float-end" role="group">
                 <button type="button" class="btn btn-primary" id="data-week"
-                        onclick="fetchDashboardData('week')">Week
+                        onclick="fetchDashboardData('week')">
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                          id="data-week-loading" hidden></span>
+                    Week
                 </button>
                 <button type="button" class="btn btn-primary" id="data-month"
-                        onclick="fetchDashboardData('month')">Month
+                        onclick="fetchDashboardData('month')">
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                          id="data-month-loading" hidden></span>
+                    Month
                 </button>
                 <button type="button" class="btn btn-primary" id="data-year"
-                        onclick="fetchDashboardData('year')">Year
+                        onclick="fetchDashboardData('year')">
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                          id="data-year-loading" hidden></span>
+                    Year
                 </button>
             </div>
         </div>
@@ -94,23 +103,17 @@
             })
             if (period === 'month') {
                 document.getElementById('data-month').classList.add('custom-active-blue')
+                document.getElementById('data-month').setAttribute('disabled', 'true')
+                document.getElementById('data-month-loading').removeAttribute('hidden')
             } else if (period === 'year') {
                 document.getElementById('data-year').classList.add('custom-active-blue')
+                document.getElementById('data-year').setAttribute('disabled', 'true')
+                document.getElementById('data-year-loading').removeAttribute('hidden')
             } else {
                 document.getElementById('data-week').classList.add('custom-active-blue')
+                document.getElementById('data-week').setAttribute('disabled', 'true')
+                document.getElementById('data-week-loading').removeAttribute('hidden')
             }
-
-            iziToast.show({
-                title: "Loading",
-                message: "Please wait...",
-                position: "center",
-                class: "izitoast_loader",
-                overlay: true,
-                timeout: 3500,
-                close: false,
-                transitionIn: 'flipInX',
-                transitionOut: 'flipOutX',
-            })
             fetch(`/dashboard/data?period=${period}`)
                 .then(response => response.json())
                 .then(data => {
@@ -133,7 +136,14 @@
                         maxWidth: 310
                     })
                 })
-            iziToast.hide({}, document.querySelector('.izitoast_loader'))
+            let loaders = document.getElementsByClassName('spinner-border');
+            [].forEach.call(loaders, function (el) {
+                el.setAttribute('hidden', 'true')
+            })
+            let buttons = document.getElementsByClassName('btn');
+            [].forEach.call(buttons, function (el) {
+                el.removeAttribute('disabled')
+            })
         }
 
         const populateSalesChart = salesData => {
