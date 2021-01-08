@@ -12,12 +12,11 @@ class NewJobForm(forms.Form):
         super().__init__(*args, **kwargs)
         clients = Contact.objects.filter(contact_type='client')
         staff = Staff.objects.all()
-        vehicles = Vehicle.objects.none()
+        vehicles = Vehicle.objects.all()
         self.fields['client'].queryset = clients
         self.fields['assigned'].queryset = staff
         self.fields['vehicle'].queryset = vehicles
         if 'client' in self.data:
-            print('clint in self data')
             try:
                 owner_id = int(self.data.get('client'))
                 self.fields['vehicle'].queryset = Contact.objects.get(

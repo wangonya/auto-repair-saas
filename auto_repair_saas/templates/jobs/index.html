@@ -653,10 +653,6 @@
         form.reset()
         const vehiclesUrl = form.dataset.vehiclesUrl
         const fetchClientVehicles = (clientInput, vehicleInput, vehicleValue = '') => {
-            {#console.log('in fetchClientVehicles.')#}
-            {#console.log('clientInput.value = ', clientInput.value)#}
-            {#console.log('vehicleInput = ', vehicleInput)#}
-            console.log('vehicleValue = ', vehicleValue)
             fetch(`${vehiclesUrl}?client=${clientInput.value}`)
                 .then(response => response.text())
                 .then(html => {
@@ -666,8 +662,6 @@
                 .catch((error) => {
                 })
             vehicleInput.disabled = clientInput.value === ''
-            {#console.log('vehicleInput = ', vehicleInput)#}
-            {#console.log('vehicleInput.value = ', vehicleInput.value)#}
         }
 
         {#  load job data in view modal  #}
@@ -763,6 +757,10 @@
                 modalPaymentMethod.value = jobPaymentMethod
 
                 fetchClientVehicles(modalClient, modalVehicle, jobVehicle)
+
+                modalClient.onchange = event => {
+                    fetchClientVehicles(modalClient, modalVehicle)
+                }
 
                 form.action = `/jobs/update/${jobId}/`
                 const submitButton = document.getElementById("submit-job-form")
