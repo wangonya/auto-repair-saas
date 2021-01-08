@@ -107,7 +107,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Job #</th>
+                                <th>Job ID</th>
                                 <th>Due Start Date</th>
                                 <th>Due End Date</th>
                                 <th>Client</th>
@@ -216,7 +216,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Job #</th>
+                                <th>Job ID</th>
                                 <th>Due Start Date</th>
                                 <th>Due End Date</th>
                                 <th>Client</th>
@@ -324,7 +324,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Job #</th>
+                                <th>Job ID</th>
                                 <th>Due Start Date</th>
                                 <th>Due End Date</th>
                                 <th>Client</th>
@@ -607,10 +607,21 @@
     >
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        Are you sure you want to delete this job?
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
                 <div class="modal-body">
                     <form id="confirm-delete-job-form" method="post">
                         {% csrf_token %}
-                        <p class="p-3">Are you sure you want to delete this job? This action can not be undone.</p>
+                        <p class="p-3">This action can not be undone.</p>
                         <div class="float-end">
                             <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
                                 Cancel
@@ -639,6 +650,25 @@
         }
 
         const form = document.getElementById("job-form")
+        form.reset()
+        const vehiclesUrl = form.dataset.vehiclesUrl
+        const fetchClientVehicles = (clientInput, vehicleInput, vehicleValue = '') => {
+            {#console.log('in fetchClientVehicles.')#}
+            {#console.log('clientInput.value = ', clientInput.value)#}
+            {#console.log('vehicleInput = ', vehicleInput)#}
+            console.log('vehicleValue = ', vehicleValue)
+            fetch(`${vehiclesUrl}?client=${clientInput.value}`)
+                .then(response => response.text())
+                .then(html => {
+                    vehicleInput.innerHTML = html
+                    vehicleInput.value = vehicleValue
+                })
+                .catch((error) => {
+                })
+            vehicleInput.disabled = clientInput.value === ''
+            {#console.log('vehicleInput = ', vehicleInput)#}
+            {#console.log('vehicleInput.value = ', vehicleInput.value)#}
+        }
 
         {#  load job data in view modal  #}
         const viewJobModal = document.getElementById('viewJobModal')
@@ -669,8 +699,8 @@
             const modalStatus = viewJobModal.querySelector('#view-modal-status')
             const modalPaymentMethod = viewJobModal.querySelector('#view-modal-payment_method')
 
-            modalTitle.textContent = `View job (Job #${jobId})`
-            modalPrintTitle.textContent = `Job #${jobId}`
+            modalTitle.textContent = `View job (Job ID ${jobId})`
+            modalPrintTitle.textContent = `Job ID ${jobId}`
             modalClient.textContent = jobClient
             modalVehicle.textContent = jobVehicle
             modalDueStartDate.textContent = jobDueStartDate !== 'None' ? jobDueStartDate : '-'
@@ -711,7 +741,7 @@
                 const jobStatus = button.getAttribute('data-mdb-job-status')
                 const jobPaymentMethod = button.getAttribute('data-mdb-job-payment_method')
 
-                modalTitle.textContent = `Edit job (Job #${jobId})`
+                modalTitle.textContent = `Edit job (Job ID ${jobId})`
                 modalClient.value = jobClient
                 modalVehicle.value = jobVehicle
                 modalDueStartDate.value = jobDueStartDate !== 'None' ? jobDueStartDate : ''
@@ -732,19 +762,7 @@
                 modalStatus.value = jobStatus
                 modalPaymentMethod.value = jobPaymentMethod
 
-                {# load vehicles data depending on selected client #}
-                modalVehicle.disabled = modalClient.value === ''
-                const url = form.dataset.vehiclesUrl
-                modalClient.onchange = event => {
-                    fetch(`${url}?client=${modalClient.value}`)
-                        .then(response => response.text())
-                        .then(html => {
-                            modalVehicle.innerHTML = html
-                        })
-                        .catch((error) => {
-                        })
-                    modalVehicle.disabled = modalClient.value === ''
-                }
+                fetchClientVehicles(modalClient, modalVehicle, jobVehicle)
 
                 form.action = `/jobs/update/${jobId}/`
                 const submitButton = document.getElementById("submit-job-form")
@@ -762,16 +780,8 @@
             const clientSelect = document.getElementById('id_client')
             const vehicleSelect = document.getElementById('id_vehicle')
             vehicleSelect.disabled = clientSelect.value === ''
-            const url = form.dataset.vehiclesUrl
             clientSelect.onchange = event => {
-                fetch(`${url}?client=${clientSelect.value}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        vehicleSelect.innerHTML = html
-                    })
-                    .catch((error) => {
-                    })
-                vehicleSelect.disabled = clientSelect.value === ''
+                fetchClientVehicles(clientSelect, vehicleSelect)
             }
         })
 

@@ -4,6 +4,9 @@ from auto_repair_saas.apps.utils.models import BaseModel, ModelManager
 
 
 class Staff(BaseModel):
+    class Meta:
+        ordering = ('name',)
+
     name = models.CharField(max_length=50, null=False, blank=False)
     email = models.EmailField(null=True, blank=True)
 

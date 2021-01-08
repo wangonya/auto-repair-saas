@@ -10,7 +10,14 @@ from auto_repair_saas.apps.vehicles.models import Vehicle
 class NewJobForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        clients = Contact.objects.filter(contact_type='client')
+        staff = Staff.objects.all()
+        vehicles = Vehicle.objects.none()
+        self.fields['client'].queryset = clients
+        self.fields['assigned'].queryset = staff
+        self.fields['vehicle'].queryset = vehicles
         if 'client' in self.data:
+            print('clint in self data')
             try:
                 owner_id = int(self.data.get('client'))
                 self.fields['vehicle'].queryset = Contact.objects.get(
@@ -34,11 +41,11 @@ class NewJobForm(forms.Form):
                               ('mpesa', 'M-Pesa'))
 
     client = forms.ModelChoiceField(
-        queryset=Contact.objects.filter(contact_type='client'),
+        queryset=None,
         widget=forms.Select(attrs=select_attrs)
     )
     vehicle = forms.ModelChoiceField(
-        queryset=Vehicle.objects.all(),
+        queryset=None,
         widget=forms.Select(attrs=select_attrs)
     )
     due_start_date = forms.DateField(
@@ -52,7 +59,7 @@ class NewJobForm(forms.Form):
     )
     assigned = forms.ModelChoiceField(
         required=False,
-        queryset=Staff.objects.all(),
+        queryset=None,
         widget=forms.Select(attrs=select_attrs)
     )
     charged = forms.CharField(widget=forms.NumberInput(
