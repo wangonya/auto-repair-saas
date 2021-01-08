@@ -4,6 +4,9 @@ from auto_repair_saas.apps.utils.models import BaseModel, ModelManager
 
 
 class Contact(BaseModel):
+    class Meta:
+        ordering = ('name',)
+
     CONTACT_TYPE_CHOICES = (
         ('client', 'Client'), ('supplier', 'Supplier'))
     contact_type = models.CharField(

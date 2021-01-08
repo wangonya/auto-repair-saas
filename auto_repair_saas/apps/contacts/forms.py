@@ -17,7 +17,7 @@ class NewContactForm(forms.Form):
         attrs={
             **input_attrs,
             **{
-                'type': 'number',
+                'type': 'tel',
                 'title': "07xxxxxxxx",
                 'data-mdb-toggle': "tooltip"
             }

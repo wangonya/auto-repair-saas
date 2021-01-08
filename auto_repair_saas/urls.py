@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from auto_repair_saas.apps.utils.seed_data import seed_data
+from auto_repair_saas.apps.utils.factories import seed_data
 
 urlpatterns = [
     path('', include('auto_repair_saas.apps.dashboard.urls')),

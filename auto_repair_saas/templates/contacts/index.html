@@ -278,10 +278,24 @@
     >
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        Are you sure you want to delete this contact?
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-mdb-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
                 <div class="modal-body">
                     <form id="confirm-delete-contact-form" method="post">
                         {% csrf_token %}
-                        <p class="p-3">Are you sure you want to delete this contact? This action can not be undone.</p>
+                        <p class="p-3">
+                            All vehicles and jobs related to this contact will also be deleted.
+                            This action can not be undone.
+                        </p>
                         <div class="float-end">
                             <button type="button" class="btn btn-light" data-mdb-dismiss="modal">
                                 Cancel
