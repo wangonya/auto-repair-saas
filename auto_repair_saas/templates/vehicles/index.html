@@ -165,15 +165,16 @@
 
     <script>
         const vehicleFormModal = document.getElementById('vehicleFormModal')
+        const form = document.getElementById('vehicle-form')
         vehicleFormModal.addEventListener('show.mdb.modal', event => {
             const button = event.relatedTarget
             const modalMode = button.getAttribute('data-mdb-mode')
+            const modalTitle = vehicleFormModal.querySelector('#vehicle-modal-title')
             if (modalMode === 'edit') {
+                form.reset()
                 const vehicleId = button.getAttribute('data-mdb-vehicle-id')
                 const vehicleNumberPlate = button.getAttribute('data-mdb-vehicle-number_plate')
                 const vehicleOwner = button.getAttribute('data-mdb-vehicle-owner')
-
-                const modalTitle = vehicleFormModal.querySelector('#vehicle-modal-title')
                 const modalVehicleNumberPlate = vehicleFormModal.querySelector('#id_number_plate')
                 const modalVehicleOwner = vehicleFormModal.querySelector('#id_owner')
 
@@ -185,6 +186,12 @@
                 form.action = `/vehicles/update/${vehicleId}/`
                 const submitButton = document.getElementById("submit-vehicle-form")
                 submitButton.textContent = 'Save'
+            } else {
+                form.reset()
+                modalTitle.textContent = `Create vehicle`
+                form.action = `/vehicles/`
+                const submitButton = document.getElementById("submit-vehicle-form")
+                submitButton.textContent = 'Create'
             }
         })
 
