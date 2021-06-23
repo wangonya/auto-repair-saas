@@ -18,3 +18,4 @@ webencodings==0.5.1
 gunicorn
 isort
 black
+flake8
