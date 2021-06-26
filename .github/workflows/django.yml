@@ -29,7 +29,11 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
-      - run: sh ./publish_docs.sh
+      - env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          chmod +x ./publish_docs.sh
+          ./publish_docs.sh
 
   linter:
     needs: create-virtualenv
