@@ -19,3 +19,4 @@ gunicorn
 isort
 black
 flake8
+sphinx
