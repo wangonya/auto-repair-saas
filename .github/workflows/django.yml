@@ -7,21 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  setup:
+  create-virtualenv:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:10.8
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: github_actions
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v2
@@ -35,7 +22,7 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
   build-docs:
-    needs: setup
+    needs: create-virtualenv
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -51,8 +38,19 @@ jobs:
           ./publish_docs.sh
 
   tests:
-    needs: setup
+    needs: create-virtualenv
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v2
