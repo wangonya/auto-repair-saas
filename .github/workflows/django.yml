@@ -2,15 +2,44 @@ name: Django CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build:
-
+  create-virtualenv:
     runs-on: ubuntu-latest
-    
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+  build-docs:
+    needs: create-virtualenv
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+
+      - name: Build docs
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x ./publish_docs.sh
+          ./publish_docs.sh
+
+  tests:
+    needs: create-virtualenv
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:10.8
@@ -22,38 +51,28 @@ jobs:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: psycopg2 prerequisites
-      run: sudo apt-get install python-dev libpq-dev
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Setup CC Test Reporter
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-        ./cc-test-reporter before-build
-    - name: Run Tests
-      env:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+
+      - name: psycopg2 prerequisites
+        run: sudo apt-get install python-dev libpq-dev
+      - name: Setup CC Test Reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+      - name: Run Tests
+        env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      run: |
-        coverage run --source='auto_repair_saas.apps' manage.py test
-        coverage xml
-    - name: Upload Test Results
-      env:
+        run: |
+          coverage run --source='auto_repair_saas.apps' manage.py test
+          coverage xml
+      - name: Upload Test Results
+        env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      run: |
-        ./cc-test-reporter format-coverage -t coverage.py
-        ./cc-test-reporter upload-coverage
+        run: |
+          ./cc-test-reporter format-coverage -t coverage.py
+          ./cc-test-reporter upload-coverage
