@@ -97,30 +97,11 @@ echo "git config user.email $author_email"
 git config user.email $author_email
 echo ::endgroup::
 
-# sphinx extensions
-if [ "$INPUT_INSTALL_EXTENSIONS" = true ]; then
-	echo ::group::Installing sphinx extensions
-	echo "pip3 install -r $docs_src/$INPUT_SOURCE_DIR/requirements.txt"
-	pip3 install django
-	echo ::endgroup::
-fi
-
 # sphinx-build
 echo ::group::Sphinx build html
 echo "sphinx-build -b html $docs_src/$INPUT_SOURCE_DIR $docs_html -E -d $sphinx_doctree"
 sphinx-build -b html $docs_src/$INPUT_SOURCE_DIR $docs_html -E -d $sphinx_doctree
 echo ::endgroup::
-
-# auto creation of README.md
-if [ "$INPUT_CREATE_README" = true ]; then
-	echo ::group::Create README
-	echo "Create file README.md with these content"
-	echo "GitHub Pages of [$GITHUB_REPOSITORY](https://github.com/$GITHUB_REPOSITORY.git)" >README.md
-	echo "===" >>README.md
-	echo "Sphinx html documentation of [$docs_sha8](https://github.com/$GITHUB_REPOSITORY/tree/$GITHUB_SHA)" >>README.md
-	cat README.md
-	echo ::endgroup::
-fi
 
 # commit and push
 echo ::group::Push
