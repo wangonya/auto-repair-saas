@@ -20,3 +20,4 @@ isort
 black
 flake8
 sphinx
+wheel
